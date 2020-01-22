@@ -13,7 +13,6 @@ public class Controlador implements IControladorRemoto{
 	
 	private JuegoPublico juego;
 	private IVista vista;
-	//anda
 
 	public <T extends IObservableRemoto> Controlador(T modelo) {
 		try {

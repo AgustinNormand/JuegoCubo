@@ -353,9 +353,11 @@ public class VentanaPrincipal extends JFrame implements IVista {
 	
 	@Override
 	public void verificarVioCarta() {
-		mostrarMensaje("Viste la carta?");
+		mostrarMensaje(jugadores.get(jugadorEnTurno).getNombre() +" viste la carta?","Si");
 		
 	}
+
+
 
 	@Override
 	public void mostrar2CartasJugadores() {
@@ -364,7 +366,7 @@ public class VentanaPrincipal extends JFrame implements IVista {
 		
 		for (Jugador jugador:jugadores) {
 			imprimirCartas(jugador);
-			mostrarMensaje("viste las cartas?");
+			mostrarMensaje(jugador.getNombre()+ " viste las cartas?","Si");
 		}
 	}
 
@@ -448,9 +450,12 @@ public class VentanaPrincipal extends JFrame implements IVista {
 		}
 	}
 
-	public void mostrarMensaje(String mensaje) {
-		Message msgFrame = new Message(mensaje);
-		msgFrame.setVisible(true);
+	public void mostrarMensaje(String mensajeLabel) {
+		mostrarMensaje(mensajeLabel,"Ok");
 	}
 	
+	private void mostrarMensaje(String mensajeLabel, String mensajeBoton) {
+		Message msgFrame = new Message(mensajeLabel,mensajeBoton);
+		msgFrame.setVisible(true);		
+	}
 }

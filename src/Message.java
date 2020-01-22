@@ -19,9 +19,10 @@ public class Message extends JFrame {
 	/**
 	 * Create the frame.
 	 */
-	public Message(String mensaje) {
+	
+	public Message(String mensajeLabel,String mensajeBoton) {
 		setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-		setBounds(100, 100, 450, 300);
+		setBounds(100, 100, 183, 147);
 		contentPane = new JPanel();
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
 		setContentPane(contentPane);
@@ -29,18 +30,17 @@ public class Message extends JFrame {
 		
 		JPanel panel = new JPanel();
 		contentPane.add(panel, BorderLayout.CENTER);
-		panel.setLayout(new MigLayout("", "[][][][][][][][][]", "[][][][][][]"));
+		panel.setLayout(new MigLayout("", "[]", "[][]"));
 		
-		JLabel lblNewLabel = new JLabel("New label");
-		panel.add(lblNewLabel, "cell 6 3,alignx center,aligny center");
+		JLabel lblNewLabel = new JLabel(mensajeLabel);
+		panel.add(lblNewLabel, "cell 1 1,alignx center,aligny center");
 		
-		JButton btnSalir = new JButton("Ok");
+		JButton btnSalir = new JButton(mensajeBoton);
 		btnSalir.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
 			}
 		});
-		panel.add(btnSalir, "cell 6 5");
-		lblNewLabel.setText(mensaje);
+		panel.add(btnSalir, "cell 1 2,alignx center,aligny center");
 		btnSalir.addActionListener(new ActionListener() {
 			
 			@Override
