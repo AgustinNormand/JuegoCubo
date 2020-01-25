@@ -116,6 +116,7 @@ public class VentanaPrincipal extends JFrame implements IVista {
 		panel_4.add(lblCartaMazo, "cell 4 2");
 		lblCartaMazo.setVisible(false);
 		
+		
 		lblCartaDescartada = new JLabel();
 		lblCartaDescartada.addMouseListener(new MouseAdapter() {
 			@Override
