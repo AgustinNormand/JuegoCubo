@@ -13,14 +13,43 @@ import java.awt.event.MouseListener;
 import java.awt.event.ActionEvent;
 
 public class Message extends JFrame {
-
+	
+	private boolean response = null;
 	private JPanel contentPane;
 
 	/**
 	 * Create the frame.
 	 */
-	
+	public Message(String mensajeLabel,String mensajeBotonAfirmativo,String mensajeBotonNegativo) {
+		createFrame(mesajeLabel);
+		JButton btnAfirmativo = new JButton(mensajeBotonAfirmatvo);
+		panel.add(btnAfirmativo, "cell 1 2,alignx center,aligny center");
+		btnAfirmativo.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+				response = true;
+			}
+		});
+		JButton btnNegativo = new JButton(mensajeBotonNegativo);
+		panel.add(btnNegativo, "cell 1 2,alignx center,aligny center");
+		btnNegativo.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+					response = false;
+			}
+		});
+	}
 	public Message(String mensajeLabel,String mensajeBoton) {
+		createFrame(mesajeLabel);
+		JButton btnSalir = new JButton(mensajeBoton);
+		panel.add(btnSalir, "cell 1 2,alignx center,aligny center");
+		btnSalir.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+					dispose();
+			}
+		});
+	}
+		
+}
+	private void createFrame(String mesajeLabel) {
 		setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 		setBounds(100, 100, 183, 147);
 		contentPane = new JPanel();
@@ -35,18 +64,12 @@ public class Message extends JFrame {
 		JLabel lblNewLabel = new JLabel(mensajeLabel);
 		panel.add(lblNewLabel, "cell 1 1,alignx center,aligny center");
 		
-		JButton btnSalir = new JButton(mensajeBoton);
-		btnSalir.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent arg0) {
-			}
-		});
-		panel.add(btnSalir, "cell 1 2,alignx center,aligny center");
-		btnSalir.addActionListener(new ActionListener() {
-			
-			@Override
-			public void actionPerformed(ActionEvent arg0) {
-				dispose();
-			}
-		});
-}
+	}
+	
+	public boolean getResponse() {
+		boolean aux = response;
+		response = null;
+		return aux;
+	}
+
 }
