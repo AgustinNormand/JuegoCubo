@@ -13,7 +13,7 @@ import java.awt.event.MouseListener;
 import java.awt.event.ActionEvent;
 
 public class Message extends JFrame {
-	
+	static final int YES_OPTION = 1; 
 	private boolean updatedResponse = false;
 	private boolean response;
 	private JPanel contentPane;

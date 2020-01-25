@@ -105,7 +105,7 @@ public class VentanaPrincipal extends JFrame implements IVista {
 		panel_4 = new JPanel();
 		panel_4.setLayout(new MigLayout("", "[]", "[]"));
 		lblCartaMazo = new JLabel();
-		ImageIcon dorsoCarta = new ImageIcon("/home/agustin/Desktop/Objetos/img/DORSO.png");
+		ImageIcon dorsoCarta = new ImageIcon("images/DORSO.png");
 		lblCartaMazo.setIcon(dorsoCarta);
 		lblCartaMazo.addMouseListener(new MouseAdapter() {
 			@Override
@@ -429,18 +429,18 @@ public class VentanaPrincipal extends JFrame implements IVista {
 
 	@Override
 	public void puedeVerCarta() {
-		int dialogResult = JOptionPane.showConfirmDialog(this, "Tiene la posibilidad de ver una carta, quiere hacerlo?");
-		if (dialogResult == JOptionPane.YES_OPTION) {
+		int dialogResult = mostrarMensajeInput("Tiene la posibilidad de ver una carta, quiere hacerlo?", "Si", "No");
+		if (dialogResult == Message.YES_OPTION) {
 			controlador.jugadorDeseaVerCarta(jugadorEnTurno);
 			verCartaActivado = true;
-			JOptionPane.showMessageDialog(this, "Seleccione la carta que desea ver");
+			mostrarMensaje("Seleccione la carta que desea ver", "Ok");
 		}
 	}
 
 	@Override
 	public void puedeIntercambiarCarta() {
-		int dialogResult = JOptionPane.showConfirmDialog(this, "Tiene la posibilidad de intercambiar una carta, quiere hacerlo?");
-		if (dialogResult == JOptionPane.YES_OPTION) {
+		int dialogResult = mostrarMensajeInput("Tiene la posibilidad de intercambiar una carta, quiere hacerlo?", "Si", "No");
+		if (dialogResult == Message.YES_OPTION) {
 			int jugadorOrigen = Integer.valueOf(JOptionPane.showInputDialog("Jugador?"));
 			int numeroCarta = Integer.valueOf(JOptionPane.showInputDialog("Carta?"));
 			controlador.intercambiarCartas(jugadorEnTurno,jugadorOrigen,numeroCarta);
@@ -457,5 +457,18 @@ public class VentanaPrincipal extends JFrame implements IVista {
 	private void mostrarMensaje(String mensajeLabel, String mensajeBoton) {
 		Message msgFrame = new Message(mensajeLabel,mensajeBoton);
 		msgFrame.setVisible(true);		
+	}
+	private int mostrarMensajeInput(String mensajeLabel,String mensajeBotonAfirmativo,String mensajeBotonNegativo) {
+		Message msgFrame = new Message(mensajeLabel,mensajeBotonAfirmativo,mensajeBotonNegativo);
+		int response = -1;
+		while (response == -1) {
+			response = msgFrame.getResponse();
+			try {
+				Thread.sleep(500);
+			} catch (InterruptedException e) {
+				e.printStackTrace();
+			}
+		}
+		return response;
 	}
 }
