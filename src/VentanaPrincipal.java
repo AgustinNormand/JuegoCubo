@@ -105,7 +105,7 @@ public class VentanaPrincipal extends JFrame implements IVista {
 		panel_4 = new JPanel();
 		panel_4.setLayout(new MigLayout("", "[]", "[]"));
 		lblCartaMazo = new JLabel();
-		ImageIcon dorsoCarta = new ImageIcon("images/DORSO.png");
+		ImageIcon dorsoCarta = new ImageIcon(getClass().getResource("/Cartas/DORSO.png"));
 		lblCartaMazo.setIcon(dorsoCarta);
 		lblCartaMazo.addMouseListener(new MouseAdapter() {
 			@Override

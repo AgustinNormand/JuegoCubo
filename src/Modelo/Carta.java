@@ -18,8 +18,8 @@ public class Carta implements Cloneable,Serializable{
 		this.palo = palo;
 		this.visible = visible;
 		this.valor = valor;
-		icon = new ImageIcon("/images/"+this.numero+"DE"+this.palo.toString()+".png");
-		dorso = new ImageIcon("images/DORSO.png");
+		icon = new ImageIcon(getClass().getResource("/Cartas/"+this.numero+"DE"+this.palo.toString()+".png"));
+		dorso = new ImageIcon(getClass().getResource("/Cartas/DORSO.png"));
 		
 		if ((numero == 12) && (palo == tipoPalo.ORO || palo == tipoPalo.COPA)) 
 			this.valor = 0;
