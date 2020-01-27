@@ -21,6 +21,7 @@ import javax.swing.JOptionPane;
 import javax.swing.JList;
 import javax.swing.ImageIcon;
 import javax.swing.ListSelectionModel;
+import javax.swing.Timer;
 import javax.swing.JButton;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
@@ -354,23 +355,24 @@ public class VentanaPrincipal extends JFrame implements IVista {
 	
 	@Override
 	public void verificarVioCarta() {
-		mostrarMensaje(jugadores.get(jugadorEnTurno).getNombre() +" viste la carta?","Si");
-		
+		//boolean vioCarta = false;
+		//while (!vioCarta)
+		//	vioCarta = (mostrarMensajeInput(jugadores.get(jugadorEnTurno).getNombre() +" viste la carta?","Si","No") == 1);
+		mostrarMensaje("Nada");
 	}
 
 
 
 	@Override
-	public void mostrar2CartasJugadores() {
+	public void mostrar2CartasJugadores() { //Esto no me parece que este bien aca 
 		lblCartaDescartada.setVisible(true);
 		lblCartaMazo.setVisible(true);
 		
-		for (Jugador jugador:jugadores) {
-			imprimirCartas(jugador);
-			mostrarMensaje(jugador.getNombre()+ " viste las cartas?","Si");
-		}
+		//for (Jugador jugador:jugadores) {
+			//imprimirCartas(jugador);
+		//	mostrarMensajeInput(jugador.getNombre() +" viste la carta?","Si","No");
+	//}
 	}
-
 	@Override
 	public void terminarJuego(int ganador) {
 		// TODO Auto-generated method stub
@@ -465,7 +467,7 @@ public class VentanaPrincipal extends JFrame implements IVista {
 		while (response == -1) {
 			response = msgFrame.getResponse();
 			try {
-				Thread.sleep(500);
+				Thread.sleep(100);;
 			} catch (InterruptedException e) {
 				e.printStackTrace();
 			}
