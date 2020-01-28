@@ -115,6 +115,9 @@ public class Controlador implements IControladorRemoto{
 		case VERIFICAR_VIO_CARTA:
 			vista.verificarVioCarta();
 			break;
+		case VERIFICAR_VIO_CARTA_INICIAL:
+			vista.verificarVioCartaInicial();
+			break;
 		case COMENZO_EL_JUEGO:
 			vista.comenzoElJuego();
 			break;
@@ -300,9 +303,18 @@ public class Controlador implements IControladorRemoto{
 		this.juego = (JuegoPublico) modeloRemoto;
 	}
 
-	public void cartasMostradas() {
+	public void cartasMostradasInicial() {
 		try {
-			juego.cartasMostradas();
+			juego.cartasMostradasInicial();
+		} catch (RemoteException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+	
+	public void cartasMostradasMazo() {
+		try {
+			juego.cartasMostradasMazo();
 		} catch (RemoteException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

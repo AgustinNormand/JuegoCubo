@@ -34,7 +34,7 @@ public class Juego extends ObservableRemoto implements JuegoPublico {
 		}
 		
 		public void comenzarJuego() throws RemoteException{
-			estado = estadoJuego.JUGANDO;
+			estado = estadoJuego.JUGANDO;//Mostrando Cartas
 			notificarObservadores(posiblesCambios.ESTADO_JUEGO);
 			notificarObservadores(posiblesCambios.COMENZO_EL_JUEGO);
 			repartirCartas();
@@ -48,7 +48,7 @@ public class Juego extends ObservableRemoto implements JuegoPublico {
 			jugador.recivirCarta(mazo.getCartaMazo(false));
 			jugador.recivirCarta(mazo.getCartaMazo(false));
 			notificarObservadores(posiblesCambios.NUEVAS_CARTAS_JUGADOR_A_MOSTRAR_CARTA);
-			notificarObservadores(posiblesCambios.VERIFICAR_VIO_CARTA);
+			notificarObservadores(posiblesCambios.VERIFICAR_VIO_CARTA_INICIAL);
 		}
 		
 		@Override
@@ -56,7 +56,7 @@ public class Juego extends ObservableRemoto implements JuegoPublico {
 			return jugadorAMostrarCarta;
 		}
 		@Override
-		public void cartasMostradas() throws RemoteException{
+		public void cartasMostradasInicial() throws RemoteException{
 			//notificarObservadores(posiblesCambios.VERIFICAR_TODOS_LISTOS);
 			Jugador jugador = jugadores.get(jugadorAMostrarCarta);
 			jugador.ocultarCartas();
@@ -139,7 +139,8 @@ public class Juego extends ObservableRemoto implements JuegoPublico {
 		}
 		@Override
 		public void levantarDeMazo(int indiceJugador) throws RemoteException {
-			Jugador jugador = jugadores.get(indiceJugador);
+			jugadorAMostrarCarta = indiceJugador;
+			Jugador jugador = jugadores.get(jugadorAMostrarCarta);
 			if (!jugador.yaLevanto()) {
 				Carta cartaMazo = mazo.getCartaMazo(true);
 				if (cartaMazo != null) {
@@ -147,23 +148,24 @@ public class Juego extends ObservableRemoto implements JuegoPublico {
 				jugador.setLevanto(true);
 				notificarObservadores(posiblesCambios.NUEVAS_CARTAS_JUGADORES);
 				notificarObservadores(posiblesCambios.VERIFICAR_VIO_CARTA);
-				jugador.ocultarCartas();
-				notificarObservadores(posiblesCambios.NUEVAS_CARTAS_JUGADORES);
 				
 				if (cartaMazo.getValor() == 10) 
 					notificarObservadores(posiblesCambios.PUEDE_VER_CARTA);
 				if (cartaMazo.getValor() == 11) 
 					notificarObservadores(posiblesCambios.PUEDE_INTERCAMBIAR_CARTA);
-				
-				verificarFinTurno(jugador);
 				} else
 					arrojarError("El mazo no tiene mas cartas.");
 			} else
 				arrojarError("No se puede levantar dos veces");
+			
 		}
-		private void ocultarCartas() {
-			for (Jugador jugador:jugadores) 
-				jugador.ocultarCartas();
+		
+		@Override
+		public void cartasMostradasMazo() throws RemoteException {
+			Jugador jugador = jugadores.get(jugadorAMostrarCarta);
+			jugador.ocultarCartas();
+			notificarObservadores(posiblesCambios.NUEVAS_CARTAS_JUGADORES);
+			verificarFinTurno(jugador);
 		}
 		@Override
 		public void agregarJugador(String nombre) throws RemoteException {

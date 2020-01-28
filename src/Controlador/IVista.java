@@ -25,4 +25,5 @@ public interface IVista {
 	void puedeIntercambiarCarta();
 	void iniciar();
 	void nuevasCartasJugadorAMostrarCartas();
+	void verificarVioCartaInicial();
 }
