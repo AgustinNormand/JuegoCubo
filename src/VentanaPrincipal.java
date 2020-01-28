@@ -109,26 +109,17 @@ public class VentanaPrincipal extends JFrame implements IVista {
 		
 		panel_4 = new JPanel();
 		panel_4.setLayout(new MigLayout("", "[]", "[]"));
+		
 		lblCartaMazo = new JLabel();
 		ImageIcon dorsoCarta = new ImageIcon(getClass().getResource("/Cartas/DORSO.png"));
 		lblCartaMazo.setIcon(dorsoCarta);
-		lblCartaMazo.addMouseListener(new MouseAdapter() {
-			@Override
-			public void mouseClicked(MouseEvent e) {
-				controlador.levantarDelMazo(jugadorEnTurno);
-			}
-		});
+
 		panel_4.add(lblCartaMazo, "cell 4 2");
 		lblCartaMazo.setVisible(false);
 		
 		
 		lblCartaDescartada = new JLabel();
-		lblCartaDescartada.addMouseListener(new MouseAdapter() {
-			@Override
-			public void mouseClicked(MouseEvent e) {
-				controlador.levantarDeDescartadas(jugadorEnTurno);
-			}
-		});
+		lblCartaDescartada.setIcon(dorsoCarta);
 		panel_4.add(lblCartaDescartada, "cell 7 2");
 		lblCartaDescartada.setVisible(false);
 		
@@ -137,38 +128,95 @@ public class VentanaPrincipal extends JFrame implements IVista {
 		panel_4.add(panel_cartas, "cell 0 7 13 1,grow");
 		
 		btnCubo = new JButton("Cubo");
-		panel_4.add(btnCubo, "cell 4 8");
+		panel_3.add(btnCubo, "cell 1 0");
 		btnCubo.setVisible(false);
 		
 		btnEspejito = new JButton("Espejito");
-		panel_4.add(btnEspejito, "cell 7 8");
+		panel_3.add(btnEspejito, "cell 0 0");
 		btnEspejito.setVisible(false);
 		
 		btnCartasVistas = new JButton("CartasVistas");
-		panel_4.add(btnCartasVistas, "cell 16 4");
+		panel_3.add(btnCartasVistas, "cell 2 0");
 		btnCartasVistas.setVisible(false);
+		
+		btnIntercambiarCartas = new JButton("Intercambiar Cartas");
+		panel_3.add(btnIntercambiarCartas, "cell 4 0");
+		btnIntercambiarCartas.setVisible(false);
+		
+		
+		btnVerCarta = new JButton("Ver Carta");
+		panel_3.add(btnVerCarta, "cell 3 0");
+		btnVerCarta.setVisible(false);
+	
+		
+		btnFinDeTurno = new JButton("Fin De Turno");
+		panel_3.add(btnFinDeTurno, "cell 5 0");
+		btnFinDeTurno.setVisible(false);
+
+		
+		
+
+		//
+		
+		// Defino el panel de configuracion inicial
+		panelConfiguracion = new JPanel();
+		contentPane.add(panelConfiguracion,BorderLayout.CENTER);
+		panelConfiguracion.setLayout(new MigLayout("", "[][][][][][][][][][][][][center][][][][][][][][][][][][][][]", "[][][][][][][][][][][][]"));
+		
+		JLabel lblBienvenida = new JLabel("Bienvenido al CUBO");
+		panelConfiguracion.add(lblBienvenida,"cell 12 4");
+		
+		lblInformativo = new JLabel("Debe agregar al menos 2 jugadores para poder jugar");
+		panelConfiguracion.add(lblInformativo,"cell 12 6");
+		
+		JButton btnAgregarJugador = new JButton ("Agregar Jugador");
+		panelConfiguracion.add(btnAgregarJugador,"cell 12 7");
+	
+		
+		btnComenzarJuego = new JButton ("Comenzar Juego");
+		btnComenzarJuego.setVisible(false); //Lo hago visible cuando el juego sea JUGABLE
+		panelConfiguracion.add(btnComenzarJuego,"cell 12 8");
+	
+		//
+		
+		// Defino el menu de la pantalla principal
+		JMenuBar menuBar = new JMenuBar();
+		setJMenuBar(menuBar);
+
+		JMenu mnArchivo = new JMenu("Archivo");
+		menuBar.add(mnArchivo);
+
+		JMenuItem mntmAgregarJugador = new JMenuItem("Agregar Jugador");
+		mnArchivo.add(mntmAgregarJugador);
+
+		JMenuItem mntmComenzarJuego = new JMenuItem("Comenzar Juego");
+		mnArchivo.add(mntmComenzarJuego);
+
+		JMenuItem mntmSalir = new JMenuItem("Salir");
+		mnArchivo.add(mntmSalir);
+
+		// Action Listeners
+		lblCartaMazo.addMouseListener(new MouseAdapter() {
+			@Override
+			public void mouseClicked(MouseEvent e) {
+				controlador.levantarDelMazo(jugadorEnTurno);
+			}
+		});
+		lblCartaDescartada.addMouseListener(new MouseAdapter() {
+			@Override
+			public void mouseClicked(MouseEvent e) {
+				controlador.levantarDeDescartadas(jugadorEnTurno);
+			}
+		});
 		btnCartasVistas.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				controlador.cartasMostradasMazo();
 				btnCartasVistas.setVisible(false);
+				controlador.cartasMostradas();
 			}
 		});
-		btnCartasVistasInicial = new JButton("CartasVistas");
-		panel_4.add(btnCartasVistasInicial, "cell 14 2");
-		btnCartasVistasInicial.setVisible(false);
-		btnCartasVistasInicial.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				btnCartasVistasInicial.setVisible(false);
-				controlador.cartasMostradasInicial();
-			}
-		});
-		
-		btnIntercambiarCartas = new JButton("Intercambiar Cartas");
-		panel_4.add(btnIntercambiarCartas, "cell 15 3");
-		btnIntercambiarCartas.setVisible(false);
-		btnIntercambiarCartas.addActionListener(new ActionListener() {
+	
+btnIntercambiarCartas.addActionListener(new ActionListener() {
 			
 			@Override
 			public void actionPerformed(ActionEvent e) {
@@ -180,11 +228,7 @@ public class VentanaPrincipal extends JFrame implements IVista {
 					//JOptionPane.showMessageDialog(this, "Seleccione la carta que desea intercambiar");
 			}
 		});
-		
-		btnVerCarta = new JButton("Ver Carta");
-		panel_4.add(btnVerCarta, "cell 15 4");
-		btnVerCarta.setVisible(false);
-		btnVerCarta.addActionListener(new ActionListener() {
+	btnVerCarta.addActionListener(new ActionListener() {
 			
 			@Override
 			public void actionPerformed(ActionEvent e) {
@@ -193,19 +237,6 @@ public class VentanaPrincipal extends JFrame implements IVista {
 				mostrarMensaje("Seleccione la carta que desea ver", "Ok");	
 			}
 		});
-		
-		btnFinDeTurno = new JButton("Fin De Turno");
-		panel_4.add(btnFinDeTurno, "cell 9 8");
-		btnFinDeTurno.setVisible(false);
-
-		btnCubo.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent arg0) {
-				controlador.Cubo(jugadorEnTurno);
-				btnCubo.setVisible(false);
-			}
-		});
-		
 		btnFinDeTurno.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseClicked(MouseEvent e) {
@@ -226,55 +257,26 @@ public class VentanaPrincipal extends JFrame implements IVista {
 					
 			}
 		});
-		//
-		
-		// Defino el panel de configuracion inicial
-		panelConfiguracion = new JPanel();
-		contentPane.add(panelConfiguracion,BorderLayout.CENTER);
-		panelConfiguracion.setLayout(new MigLayout("", "[][][][][][][][][][][][][center][][][][][][][][][][][][][][]", "[][][][][][][][][][][][]"));
-		
-		JLabel lblBienvenida = new JLabel("Bienvenido al CUBO");
-		panelConfiguracion.add(lblBienvenida,"cell 12 4");
-		
-		lblInformativo = new JLabel("Debe agregar al menos 2 jugadores para poder jugar");
-		panelConfiguracion.add(lblInformativo,"cell 12 6");
-		
-		JButton btnAgregarJugador = new JButton ("Agregar Jugador");
-		panelConfiguracion.add(btnAgregarJugador,"cell 12 7");
 		btnAgregarJugador.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
 				String nombreJugador = JOptionPane.showInputDialog("Ingrese el nombre del jugador ");
 				controlador.agregarJugador(nombreJugador);}
 			});
-		
-		btnComenzarJuego = new JButton ("Comenzar Juego");
-		btnComenzarJuego.setVisible(false); //Lo hago visible cuando el juego sea JUGABLE
-		panelConfiguracion.add(btnComenzarJuego,"cell 12 8");
 		btnComenzarJuego.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
 				controlador.jugar();}
 		});
-		//
 		
-		// Defino el menu de la pantalla principal
-		JMenuBar menuBar = new JMenuBar();
-		setJMenuBar(menuBar);
-
-		JMenu mnArchivo = new JMenu("Archivo");
-		menuBar.add(mnArchivo);
-
-		JMenuItem mntmAgregarJugador = new JMenuItem("Agregar Jugador");
-		mnArchivo.add(mntmAgregarJugador);
-
-		JMenuItem mntmComenzarJuego = new JMenuItem("Comenzar Juego");
-		mnArchivo.add(mntmComenzarJuego);
-
-		JMenuItem mntmSalir = new JMenuItem("Salir");
-		mnArchivo.add(mntmSalir);
-
-		// Action Listeners
+		btnCubo.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent arg0) {
+				controlador.Cubo(jugadorEnTurno);
+				btnCubo.setVisible(false);
+			}
+		});
+		
 		mntmAgregarJugador.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
@@ -327,11 +329,15 @@ public class VentanaPrincipal extends JFrame implements IVista {
 			btnComenzarJuego.setVisible(true);
 		}
 		if (estadoJuego.equals("JUGANDO")) {
+			lblJugadorcubo.setVisible(true);
+			lblDijoCubo.setVisible(true);
+		}
+		if (estadoJuego.equals("MOSTRANDO_CARTAS_INICIALES"))
+			cambiarPanelJuego();
+			lblEstadoDeJuego.setVisible(true);
+			lblEstado.setVisible(true);
 			lblCartaDescartada.setVisible(true);
 			lblCartaMazo.setVisible(true);
-			
-		}
-		
 	}
 
 	public void imprimirCartas(Jugador jugador) {
@@ -397,6 +403,7 @@ public class VentanaPrincipal extends JFrame implements IVista {
 		btnCubo.setVisible(false);
 		btnVerCarta.setVisible(false);
 		btnIntercambiarCartas.setVisible(false);
+		btnCartasVistas.setVisible(false);
 		
 		playerList.setSelectedIndex(numeroJugador);
 		
@@ -428,14 +435,6 @@ public class VentanaPrincipal extends JFrame implements IVista {
 		btnCartasVistas.setVisible(true);
 	}
 	
-	@Override
-	public void verificarVioCartaInicial() {
-		btnCartasVistasInicial.setVisible(true);
-		System.out.println("Its Here");
-	}
-
-
-
 	@Override
 	public void mostrar2CartasJugadores() { //Esto no me parece que este bien aca 
 		Message msgFrame = new Message(this,"Vio la carta?","Si");
@@ -482,15 +481,6 @@ public class VentanaPrincipal extends JFrame implements IVista {
 	@Override
 	public void finTurnoHabilitado(int numeroJugador) {
 		btnFinDeTurno.setVisible(true);
-	}
-
-	@Override
-	public void comenzoElJuego() {
-		lblEstado.setVisible(true);
-		lblJugadorcubo.setVisible(true);
-		lblEstadoDeJuego.setVisible(true);
-		lblDijoCubo.setVisible(true);
-		cambiarPanelJuego();
 	}
 	
 	public void cambiarPanelJuego() {

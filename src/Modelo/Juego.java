@@ -2,18 +2,24 @@ package Modelo;
 
 import java.rmi.RemoteException;
 import java.util.ArrayList;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
 import ModeloControlador.posiblesCambios;
 import ar.edu.unlu.rmimvc.observer.ObservableRemoto;
 
 public class Juego extends ObservableRemoto implements JuegoPublico {
+	private final static Logger LOGGER = Logger.getLogger("Juego");
 	private Mazo mazo = new Mazo();
 	private ArrayList<Jugador> jugadores;
 	private int jugadorEnTurno = -1;
 	private estadoJuego estado = estadoJuego.CONFIGURANDO;
 	private int jugadorQueDijoCubo = -1;
 	private int ganador = -1;
+	private Carta cartaAMostrar;
+	private Jugador jugadorAMostrarCarta;
 	
-	private int jugadorAMostrarCarta = 0;
+	private int indiceJugadorAMostrarCarta = 0;
 	
 	private String errorMessage = "";
 	
@@ -34,35 +40,36 @@ public class Juego extends ObservableRemoto implements JuegoPublico {
 		}
 		
 		public void comenzarJuego() throws RemoteException{
-			estado = estadoJuego.JUGANDO;//Mostrando Cartas
+			estado = estadoJuego.MOSTRANDO_CARTAS_INICIALES;//Mostrando Cartas
 			notificarObservadores(posiblesCambios.ESTADO_JUEGO);
-			notificarObservadores(posiblesCambios.COMENZO_EL_JUEGO);
 			repartirCartas();
 		}
 		
 		@Override
 		public void repartirCartas() throws RemoteException{
-			Jugador jugador = jugadores.get(jugadorAMostrarCarta);
+			Jugador jugador = jugadores.get(indiceJugadorAMostrarCarta);
 			jugador.recivirCarta(mazo.getCartaMazo(true));
 			jugador.recivirCarta(mazo.getCartaMazo(true));
 			jugador.recivirCarta(mazo.getCartaMazo(false));
 			jugador.recivirCarta(mazo.getCartaMazo(false));
 			notificarObservadores(posiblesCambios.NUEVAS_CARTAS_JUGADOR_A_MOSTRAR_CARTA);
-			notificarObservadores(posiblesCambios.VERIFICAR_VIO_CARTA_INICIAL);
+			notificarObservadores(posiblesCambios.VERIFICAR_VIO_CARTA);
 		}
 		
 		@Override
 		public int getJugadorAMostrarCarta() {
-			return jugadorAMostrarCarta;
+			return indiceJugadorAMostrarCarta;
 		}
-		@Override
+		
 		public void cartasMostradasInicial() throws RemoteException{
 			//notificarObservadores(posiblesCambios.VERIFICAR_TODOS_LISTOS);
-			Jugador jugador = jugadores.get(jugadorAMostrarCarta);
+			Jugador jugador = jugadores.get(indiceJugadorAMostrarCarta);
 			jugador.ocultarCartas();
 			notificarObservadores(posiblesCambios.NUEVAS_CARTAS_JUGADOR_A_MOSTRAR_CARTA);
-			jugadorAMostrarCarta++;
-			if (jugadorAMostrarCarta == jugadores.size()) {
+			indiceJugadorAMostrarCarta++;
+			if (indiceJugadorAMostrarCarta == jugadores.size()) {
+				estado = estadoJuego.JUGANDO;
+				notificarObservadores(posiblesCambios.ESTADO_JUEGO);
 				mazo.darVueltaCarta();
 				notificarObservadores(posiblesCambios.NUEVA_CARTA_DESCARTADA);
 				jugar();
@@ -121,48 +128,70 @@ public class Juego extends ObservableRemoto implements JuegoPublico {
 		
 		@Override
 		public void levantarDeDescartadas(int indiceJugador) throws RemoteException {
-			Jugador jugador = jugadores.get(indiceJugador);
-			if (!jugador.yaLevanto()) {
-				Carta cartaDescartada = mazo.getCartaDescartadas();
-				if (cartaDescartada != null) {
-					jugador.recivirCarta(cartaDescartada);
-					jugador.setLevanto(true);
-					notificarObservadores(posiblesCambios.NUEVAS_CARTAS_JUGADORES);
-					notificarObservadores(posiblesCambios.NUEVA_CARTA_DESCARTADA);
-					verificarFinTurno(jugador);
-				}
-				else
-					arrojarError("No se puede levantar una carta nula");
-			
-		} else
-			arrojarError("No se puede levantar dos veces");
+			if (estado.equals(estadoJuego.JUGANDO)) {
+				Jugador jugador = jugadores.get(indiceJugador);
+				if (!jugador.yaLevanto()) {
+					Carta cartaDescartada = mazo.getCartaDescartadas();
+					if (cartaDescartada != null) {
+						jugador.recivirCarta(cartaDescartada);
+						jugador.setLevanto(true);
+						notificarObservadores(posiblesCambios.NUEVAS_CARTAS_JUGADORES);
+						notificarObservadores(posiblesCambios.NUEVA_CARTA_DESCARTADA);
+						verificarFinTurno(jugador);
+					}
+					else
+						arrojarError("No se puede levantar una carta nula");
+				} else
+					arrojarError("No se puede levantar dos veces");
+			} else
+				arrojarError("Primero debes ver las cartas");
 		}
 		@Override
 		public void levantarDeMazo(int indiceJugador) throws RemoteException {
-			jugadorAMostrarCarta = indiceJugador;
-			Jugador jugador = jugadores.get(jugadorAMostrarCarta);
-			if (!jugador.yaLevanto()) {
-				Carta cartaMazo = mazo.getCartaMazo(true);
-				if (cartaMazo != null) {
-				jugador.recivirCarta(cartaMazo);
-				jugador.setLevanto(true);
-				notificarObservadores(posiblesCambios.NUEVAS_CARTAS_JUGADORES);
-				notificarObservadores(posiblesCambios.VERIFICAR_VIO_CARTA);
-				
-				if (cartaMazo.getValor() == 10) 
-					notificarObservadores(posiblesCambios.PUEDE_VER_CARTA);
-				if (cartaMazo.getValor() == 11) 
-					notificarObservadores(posiblesCambios.PUEDE_INTERCAMBIAR_CARTA);
+			if (estado.equals(estadoJuego.JUGANDO)) {
+				indiceJugadorAMostrarCarta = indiceJugador;
+				Jugador jugador = jugadores.get(indiceJugadorAMostrarCarta);
+				if (!jugador.yaLevanto()) {
+					Carta cartaMazo = mazo.getCartaMazo(true);
+					if (cartaMazo != null) {
+						jugador.recivirCarta(cartaMazo);
+						jugador.setLevanto(true);
+						notificarObservadores(posiblesCambios.NUEVAS_CARTAS_JUGADORES);
+						notificarObservadores(posiblesCambios.VERIFICAR_VIO_CARTA);
+						estado = estadoJuego.MOSTRANDO_CARTA_MAZO;
+						notificarObservadores(posiblesCambios.ESTADO_JUEGO);
+
+						if (cartaMazo.getValor() == 10) 
+							notificarObservadores(posiblesCambios.PUEDE_VER_CARTA);
+						if (cartaMazo.getValor() == 11) 
+							notificarObservadores(posiblesCambios.PUEDE_INTERCAMBIAR_CARTA);
+					} else
+						arrojarError("El mazo no tiene mas cartas.");
 				} else
-					arrojarError("El mazo no tiene mas cartas.");
+					arrojarError("No se puede levantar dos veces");
 			} else
-				arrojarError("No se puede levantar dos veces");
+				arrojarError("Primero debes ver las cartas");
+
+		}
+		public void cartasMostradas() throws RemoteException{
+			if (estado.equals(estadoJuego.MOSTRANDO_CARTAS_INICIALES))
+				cartasMostradasInicial();
+			else
+				if (estado.equals(estadoJuego.MOSTRANDO_CARTA_MAZO)) 
+					cartasMostradasMazo();
+				else
+					if (estado.equals(estadoJuego.MOSTRANDO_CARTA))
+						cartaMostrada();
+					else {
+						arrojarError("Error in cartasMostradas()");
+						LOGGER.log(Level.INFO,estado.toString()+" was not spected here.");
+					}
 			
 		}
-		
-		@Override
 		public void cartasMostradasMazo() throws RemoteException {
-			Jugador jugador = jugadores.get(jugadorAMostrarCarta);
+			estado = estadoJuego.JUGANDO;
+			notificarObservadores(posiblesCambios.ESTADO_JUEGO);
+			Jugador jugador = jugadores.get(indiceJugadorAMostrarCarta);
 			jugador.ocultarCartas();
 			notificarObservadores(posiblesCambios.NUEVAS_CARTAS_JUGADORES);
 			verificarFinTurno(jugador);
@@ -253,22 +282,24 @@ public class Juego extends ObservableRemoto implements JuegoPublico {
 
 		@Override
 		public void descartarCarta(int numeroJugador, int numeroCartaADescartar) throws RemoteException {
-			if (numeroJugador >= 0 && numeroJugador < jugadores.size()) {
-				Jugador jugadorADescartar = jugadores.get(numeroJugador);
-				if (numeroCartaADescartar >=1 && numeroCartaADescartar <= jugadorADescartar.cantidadDeCartas()) {
-					Carta cartaDescartada = jugadorADescartar.quitarCarta(numeroCartaADescartar);
-					if (cartaDescartada != null) 
-						if (!jugadorADescartar.yaTiro()) {
-							mazo.descartarCarta(cartaDescartada);
-							notificarObservadores(posiblesCambios.NUEVA_CARTA_DESCARTADA);
-							notificarObservadores(posiblesCambios.NUEVAS_CARTAS_JUGADORES);
-							jugadorADescartar.setTiro(true);
-							verificarFinTurno(jugadorADescartar);
-						} else arrojarError("No es posible tirar 2 veces");
-					else arrojarError("Carta nula en descartarCarta()");
-				} else arrojarError("Numero de carta invalida en descartarCarta()");
-			} else arrojarError("Numero de jugador invalido en descartarCarta()");
-			
+			if (estado.equals(estadoJuego.JUGANDO)) 
+				if (numeroJugador >= 0 && numeroJugador < jugadores.size()) {
+					Jugador jugadorADescartar = jugadores.get(numeroJugador);
+					if (numeroCartaADescartar >=1 && numeroCartaADescartar <= jugadorADescartar.cantidadDeCartas()) {
+						Carta cartaDescartada = jugadorADescartar.quitarCarta(numeroCartaADescartar);
+						if (cartaDescartada != null) 
+							if (!jugadorADescartar.yaTiro()) {
+								mazo.descartarCarta(cartaDescartada);
+								notificarObservadores(posiblesCambios.NUEVA_CARTA_DESCARTADA);
+								notificarObservadores(posiblesCambios.NUEVAS_CARTAS_JUGADORES);
+								jugadorADescartar.setTiro(true);
+								verificarFinTurno(jugadorADescartar);
+							} else arrojarError("No es posible tirar 2 veces");
+						else arrojarError("Carta nula en descartarCarta()");
+					} else arrojarError("Numero de carta invalida en descartarCarta()");
+				} else arrojarError("Numero de jugador invalido en descartarCarta()");
+			else arrojarError("Primero debes ver las cartas");
+
 		}
 
 		@Override
@@ -384,7 +415,8 @@ public class Juego extends ObservableRemoto implements JuegoPublico {
 						Carta cartaRetorno = mazo.espejito(cartaEspejito);
 						if (cartaRetorno != null) {
 							mostrarCarta(numeroJugador, numeroCarta+1);
-							jugadorEspejito.recivirCarta(cartaRetorno);}
+							jugadorEspejito.recivirCarta(cartaRetorno);
+							mostrarCarta(numeroJugador,jugadorEspejito.getCartas().indexOf(cartaRetorno)+1);}
 						else
 							jugadorEspejito.quitarCarta(numeroCarta);
 						notificarObservadores(posiblesCambios.NUEVA_CARTA_DESCARTADA);
@@ -426,17 +458,23 @@ public class Juego extends ObservableRemoto implements JuegoPublico {
 		}
 		@Override
 		public void mostrarCarta(int numeroJugador, int indiceCartaAMostrar) throws RemoteException {
+			estado  = estadoJuego.MOSTRANDO_CARTA;
+			notificarObservadores(posiblesCambios.ESTADO_JUEGO);
 			indiceCartaAMostrar = indiceCartaAMostrar -1; //Funcion de transformacion.
-			
-			Jugador jugadorAMostrarCarta = jugadores.get(numeroJugador);
+			jugadorAMostrarCarta = jugadores.get(numeroJugador);
 			ArrayList<Carta> cartasJugadorAMostrarCarta = jugadorAMostrarCarta.getCartas();
-			Carta cartaAMostrar = cartasJugadorAMostrarCarta.get(indiceCartaAMostrar);
+			cartaAMostrar = cartasJugadorAMostrarCarta.get(indiceCartaAMostrar);
 			cartaAMostrar.setVisible(true);
 			notificarObservadores(posiblesCambios.NUEVAS_CARTAS_JUGADORES);
 			notificarObservadores(posiblesCambios.VERIFICAR_VIO_CARTA);
-			cartaAMostrar.setVisible(false);
+		}
+		public void cartaMostrada() throws RemoteException {
+			//cartaAMostrar.setVisible(false);
+			jugadorAMostrarCarta.ocultarCartas();
 			notificarObservadores(posiblesCambios.NUEVAS_CARTAS_JUGADORES);
-			}
+			estado = estadoJuego.JUGANDO;
+			notificarObservadores(posiblesCambios.ESTADO_JUEGO);
+		}
 
 		@Override
 		public void intercambiarCartas(int jugadorEnTurno, int jugadorOrigen, int numeroCarta) {

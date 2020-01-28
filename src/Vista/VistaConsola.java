@@ -170,11 +170,6 @@ public class VistaConsola implements IVista{
 		
 	}
 	@Override
-	public void comenzoElJuego() {
-		// TODO Auto-generated method stub
-		
-	}
-	@Override
 	public void puedeVerCarta() {
 		// TODO Auto-generated method stub
 		
@@ -192,12 +187,6 @@ public class VistaConsola implements IVista{
 
 	@Override
 	public void nuevasCartasJugadorAMostrarCartas() {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	public void verificarVioCartaInicial() {
 		// TODO Auto-generated method stub
 		
 	}

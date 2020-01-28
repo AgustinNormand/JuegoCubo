@@ -20,10 +20,8 @@ public interface IVista {
 	void actualizarListaJugadores(ArrayList<Jugador> jugadores);
 	void finTurnoHabilitado(int numeroJugador);
 	void verificarVioCarta();
-	void comenzoElJuego();
 	void puedeVerCarta();
 	void puedeIntercambiarCarta();
 	void iniciar();
 	void nuevasCartasJugadorAMostrarCartas();
-	void verificarVioCartaInicial();
 }

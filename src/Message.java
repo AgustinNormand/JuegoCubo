@@ -31,7 +31,6 @@ public class Message extends JFrame {
 		panel.add(btnAfirmativo, "cell 1 2,alignx center,aligny center");
 		btnAfirmativo.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
-				vista.cartasVistas();
 				dispose();
 			}
 		});
