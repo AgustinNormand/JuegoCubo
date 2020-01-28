@@ -24,4 +24,5 @@ public interface IVista {
 	void puedeVerCarta();
 	void puedeIntercambiarCarta();
 	void iniciar();
+	void nuevasCartasJugadorAMostrarCartas();
 }

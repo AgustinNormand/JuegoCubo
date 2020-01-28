@@ -44,6 +44,7 @@ public class VentanaPrincipal extends JFrame implements IVista {
 	private JButton btnEspejito;
 	private JLabel lblCartaMazo;
 	private JButton btnFinDeTurno;
+	private JButton btnCartasVistas;
 	
 	private boolean espejitoActivado = false;
 	private boolean verCartaActivado = false;
@@ -51,6 +52,8 @@ public class VentanaPrincipal extends JFrame implements IVista {
 	private JLabel lblDijoCubo;
 	private JPanel panel_4;
 	private JButton btnComenzarJuego;
+	
+	private int cartasVistas = 0;
 	
 	/**
 	 * Create the frame.
@@ -139,6 +142,17 @@ public class VentanaPrincipal extends JFrame implements IVista {
 		btnEspejito = new JButton("Espejito");
 		panel_4.add(btnEspejito, "cell 7 8");
 		btnEspejito.setVisible(false);
+		
+		btnCartasVistas = new JButton("CartasVistas");
+		panel_4.add(btnCartasVistas, "cell 15 2");
+		btnCartasVistas.setVisible(false);
+		btnCartasVistas.addActionListener(new ActionListener() {
+			
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				cartasVistas();
+			}
+		});
 		
 		btnFinDeTurno = new JButton("Fin De Turno");
 		panel_4.add(btnFinDeTurno, "cell 9 8");
@@ -251,6 +265,13 @@ public class VentanaPrincipal extends JFrame implements IVista {
 	}
 	
 	@Override
+	public void nuevasCartasJugadorAMostrarCartas() {
+		jugadores = controlador.getJugadores();
+		imprimirCartas(jugadores.get(controlador.getJugadorAMostrarCarta()));
+		
+	}
+	
+	@Override
 	public void nuevasCartasJugadores() {
 		jugadores = controlador.getJugadores();
 		imprimirCartas(jugadores.get(jugadorEnTurno)); //Para actualizar la pantalla del jugador que esta jugando
@@ -262,6 +283,11 @@ public class VentanaPrincipal extends JFrame implements IVista {
 		if (estadoJuego.equals("JUGABLE")) {
 			lblInformativo.setText("Puedes comenzar a jugar o continuar agregando jugadores.");
 			btnComenzarJuego.setVisible(true);
+		}
+		if (estadoJuego.equals("JUGANDO")) {
+			lblCartaDescartada.setVisible(true);
+			lblCartaMazo.setVisible(true);
+			
 		}
 		
 	}
@@ -337,6 +363,7 @@ public class VentanaPrincipal extends JFrame implements IVista {
 		if (controlador.puedoDecirCubo()) 
 			btnCubo.setVisible(true);
 		btnEspejito.setVisible(true);
+		btnCartasVistas.setVisible(false);
 		
 	}
 
@@ -355,23 +382,18 @@ public class VentanaPrincipal extends JFrame implements IVista {
 	
 	@Override
 	public void verificarVioCarta() {
-		//boolean vioCarta = false;
-		//while (!vioCarta)
-		//	vioCarta = (mostrarMensajeInput(jugadores.get(jugadorEnTurno).getNombre() +" viste la carta?","Si","No") == 1);
-		mostrarMensaje("Nada");
+		//Message msgFrame = new Message(this,"Vio la carta?","Si");
+		btnCartasVistas.setVisible(true);
 	}
 
 
 
 	@Override
 	public void mostrar2CartasJugadores() { //Esto no me parece que este bien aca 
-		lblCartaDescartada.setVisible(true);
-		lblCartaMazo.setVisible(true);
-		
-		//for (Jugador jugador:jugadores) {
-			//imprimirCartas(jugador);
-		//	mostrarMensajeInput(jugador.getNombre() +" viste la carta?","Si","No");
-	//}
+		Message msgFrame = new Message(this,"Vio la carta?","Si");
+	}
+	public void cartasVistas() {
+		controlador.cartasMostradas();
 	}
 	@Override
 	public void terminarJuego(int ganador) {
@@ -442,7 +464,7 @@ public class VentanaPrincipal extends JFrame implements IVista {
 
 	@Override
 	public void puedeIntercambiarCarta() {
-		int dialogResult = mostrarMensajeInput("Tiene la posibilidad de intercambiar una carta, quiere hacerlo?", "Si", "No");
+		int dialogResult = mostrarMensaje("Tiene la posibilidad de intercambiar una carta, quiere hacerlo?", "Si", "No");
 		if (dialogResult == Message.YES_OPTION) {
 			int jugadorOrigen = Integer.valueOf(JOptionPane.showInputDialog("Jugador?"));
 			int numeroCarta = Integer.valueOf(JOptionPane.showInputDialog("Carta?"));
@@ -452,26 +474,9 @@ public class VentanaPrincipal extends JFrame implements IVista {
 			//JOptionPane.showMessageDialog(this, "Seleccione la carta que desea intercambiar");
 		}
 	}
-
-	public void mostrarMensaje(String mensajeLabel) {
-		mostrarMensaje(mensajeLabel,"Ok");
+	
+	private void mostrarMensaje(String mensajeLabel,String mensajeBotonAfirmativo) {
+		Message msgFrame = new Message(this,mensajeLabel,mensajeBotonAfirmativo);
 	}
 	
-	private void mostrarMensaje(String mensajeLabel, String mensajeBoton) {
-		Message msgFrame = new Message(mensajeLabel,mensajeBoton);
-		msgFrame.setVisible(true);		
-	}
-	private int mostrarMensajeInput(String mensajeLabel,String mensajeBotonAfirmativo,String mensajeBotonNegativo) {
-		Message msgFrame = new Message(mensajeLabel,mensajeBotonAfirmativo,mensajeBotonNegativo);
-		int response = -1;
-		while (response == -1) {
-			response = msgFrame.getResponse();
-			try {
-				Thread.sleep(100);;
-			} catch (InterruptedException e) {
-				e.printStackTrace();
-			}
-		}
-		return response;
-	}
 }

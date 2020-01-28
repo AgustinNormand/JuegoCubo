@@ -124,6 +124,9 @@ public class Controlador implements IControladorRemoto{
 		case PUEDE_INTERCAMBIAR_CARTA:
 			vista.puedeIntercambiarCarta();
 			break;
+		case NUEVAS_CARTAS_JUGADOR_A_MOSTRAR_CARTA:
+			vista.nuevasCartasJugadorAMostrarCartas();
+			break;
 		}
 	}
 
@@ -295,6 +298,26 @@ public class Controlador implements IControladorRemoto{
 	@Override
 	public <T extends IObservableRemoto> void setModeloRemoto(T modeloRemoto) throws RemoteException {
 		this.juego = (JuegoPublico) modeloRemoto;
+	}
+
+	public void cartasMostradas() {
+		try {
+			juego.cartasMostradas();
+		} catch (RemoteException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+
+	public int getJugadorAMostrarCarta() {
+		int aux = -1;
+		try {
+			aux = juego.getJugadorAMostrarCarta();
+		} catch (RemoteException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return aux;
 	}
 
 }

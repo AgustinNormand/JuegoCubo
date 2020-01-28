@@ -5,6 +5,8 @@ import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
+
+import Controlador.IVista;
 import net.miginfocom.swing.MigLayout;
 import javax.swing.BoxLayout;
 import javax.swing.JButton;
@@ -18,38 +20,19 @@ public class Message extends JFrame {
 	private boolean response;
 	private JPanel contentPane;
 	JPanel panel = new JPanel();
+	VentanaPrincipal vista;
 
 	/**
 	 * Create the frame.
 	 */
-	public Message(String mensajeLabel,String mensajeBotonAfirmativo,String mensajeBotonNegativo) {
+	public Message(VentanaPrincipal vista,String mensajeLabel,String mensajeBotonAfirmativo) {
 		createFrame(mensajeLabel);
 		JButton btnAfirmativo = new JButton(mensajeBotonAfirmativo);
 		panel.add(btnAfirmativo, "cell 1 2,alignx center,aligny center");
 		btnAfirmativo.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
-				response = true;
-				setVisible(false);
-				updatedResponse = true;
-			}
-		});
-		JButton btnNegativo = new JButton(mensajeBotonNegativo);
-		panel.add(btnNegativo, "cell 1 2,alignx center,aligny center");
-		btnNegativo.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent arg0) {
-					response = false;
-					setVisible(false);
-					updatedResponse = true;
-			}
-		});
-	}
-	public Message(String mensajeLabel,String mensajeBoton) {
-		createFrame(mensajeLabel);
-		JButton btnSalir = new JButton(mensajeBoton);
-		panel.add(btnSalir, "cell 1 2,alignx center,aligny center");
-		btnSalir.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent arg0) {
-					dispose();
+				vista.cartasVistas();
+				dispose();
 			}
 		});
 	}
@@ -68,21 +51,4 @@ public class Message extends JFrame {
 		setVisible(true);
 		
 	}
-	
-	public int getResponse() {
-		int integerResponse;
-		if (response)
-			integerResponse = 1;
-		else
-			integerResponse = 0;
-		
-		if (updatedResponse)
-			dispose();
-		else
-			integerResponse = -1;
-		
-		return integerResponse;
-		
-	}
-
 }

@@ -13,6 +13,8 @@ public class Juego extends ObservableRemoto implements JuegoPublico {
 	private int jugadorQueDijoCubo = -1;
 	private int ganador = -1;
 	
+	private int jugadorAMostrarCarta = 0;
+	
 	private String errorMessage = "";
 	
 		public Juego() {
@@ -31,27 +33,41 @@ public class Juego extends ObservableRemoto implements JuegoPublico {
 			}
 		}
 		
-		@Override
-		public void repartirCartas() throws RemoteException{
+		public void comenzarJuego() throws RemoteException{
 			estado = estadoJuego.JUGANDO;
 			notificarObservadores(posiblesCambios.ESTADO_JUEGO);
 			notificarObservadores(posiblesCambios.COMENZO_EL_JUEGO);
-			for(Jugador jugador:jugadores) {
-				jugador.recivirCarta(mazo.getCartaMazo(true));
-				jugador.recivirCarta(mazo.getCartaMazo(true));
-				jugador.recivirCarta(mazo.getCartaMazo(true));
-				jugador.recivirCarta(mazo.getCartaMazo(true));
-				notificarObservadores(posiblesCambios.NUEVAS_CARTAS_JUGADORES);
-				
-			}	
-			//notificarObservadores(posiblesCambios.NUEVAS_CARTAS_JUGADORES);
-			notificarObservadores(posiblesCambios.MOSTRAR_2_CARTAS_JUGADORES);
-			notificarObservadores(posiblesCambios.VERIFICAR_TODOS_LISTOS);
-			//ocultarCartas();
-			//notificarObservadores(posiblesCambios.NUEVAS_CARTAS_JUGADORES);
-			mazo.darVueltaCarta();
-			notificarObservadores(posiblesCambios.NUEVA_CARTA_DESCARTADA);
-			jugar();
+			repartirCartas();
+		}
+		
+		@Override
+		public void repartirCartas() throws RemoteException{
+			Jugador jugador = jugadores.get(jugadorAMostrarCarta);
+			jugador.recivirCarta(mazo.getCartaMazo(true));
+			jugador.recivirCarta(mazo.getCartaMazo(true));
+			jugador.recivirCarta(mazo.getCartaMazo(false));
+			jugador.recivirCarta(mazo.getCartaMazo(false));
+			notificarObservadores(posiblesCambios.NUEVAS_CARTAS_JUGADOR_A_MOSTRAR_CARTA);
+			notificarObservadores(posiblesCambios.VERIFICAR_VIO_CARTA);
+		}
+		
+		@Override
+		public int getJugadorAMostrarCarta() {
+			return jugadorAMostrarCarta;
+		}
+		@Override
+		public void cartasMostradas() throws RemoteException{
+			//notificarObservadores(posiblesCambios.VERIFICAR_TODOS_LISTOS);
+			Jugador jugador = jugadores.get(jugadorAMostrarCarta);
+			jugador.ocultarCartas();
+			notificarObservadores(posiblesCambios.NUEVAS_CARTAS_JUGADOR_A_MOSTRAR_CARTA);
+			jugadorAMostrarCarta++;
+			if (jugadorAMostrarCarta == jugadores.size()) {
+				mazo.darVueltaCarta();
+				notificarObservadores(posiblesCambios.NUEVA_CARTA_DESCARTADA);
+				jugar();
+			} else
+				repartirCartas();
 		}
 
 		@Override
@@ -61,7 +77,7 @@ public class Juego extends ObservableRemoto implements JuegoPublico {
 					configurarJuego();
 				else
 					if (estado == estadoJuego.JUGABLE) 
-						repartirCartas();
+						comenzarJuego();
 					else
 						if (estado == estadoJuego.JUGANDO)
 							jugarMano();

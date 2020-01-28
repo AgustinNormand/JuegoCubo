@@ -68,6 +68,10 @@ public interface JuegoPublico extends IObservableRemoto{
 	void mostrarCarta(int numeroJugador, int indiceCartaAMostrar) throws RemoteException;
 
 	void intercambiarCartas(int jugadorEnTurno, int jugadorOrigen, int numeroCarta)throws RemoteException;
+	
+	void cartasMostradas() throws RemoteException;
+	
+	int getJugadorAMostrarCarta() throws RemoteException;
 
 
 }
