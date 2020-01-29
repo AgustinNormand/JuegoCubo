@@ -5,8 +5,11 @@ import java.awt.event.ActionListener;
 import java.util.ArrayList;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.JTable;
+import javax.swing.JViewport;
 import javax.swing.border.EmptyBorder;
-
+import javax.swing.table.DefaultTableModel;
 
 import Controlador.Controlador;
 import Controlador.IVista;
@@ -55,6 +58,9 @@ public class VentanaPrincipal extends JFrame implements IVista {
 	private JLabel lblDijoCubo;
 	private JPanel panel_4;
 	private JButton btnComenzarJuego;
+	private JScrollPane playerScroll;
+	private JViewport playerScrollView;
+	private JTable playerTable;
 	
 	/**
 	 * Create the frame.
@@ -81,7 +87,10 @@ public class VentanaPrincipal extends JFrame implements IVista {
 		
 		playerList = new JList();
 		playerList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-		panel_1.add(playerList, "cell 0 0,grow");
+		//panel_1.add(playerList, "cell 0 0,grow");
+		
+		playerTable = new JTable();
+		panel_1.add(new JScrollPane(playerTable), "cell 0 0");
 		
 		JPanel panel_2 = new JPanel();
 		contentPane.add(panel_2, BorderLayout.NORTH);
@@ -202,12 +211,14 @@ public class VentanaPrincipal extends JFrame implements IVista {
 				controlador.levantarDelMazo(jugadorEnTurno);
 			}
 		});
+		
 		lblCartaDescartada.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseClicked(MouseEvent e) {
 				controlador.levantarDeDescartadas(jugadorEnTurno);
 			}
 		});
+		
 		btnCartasVistas.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
@@ -215,21 +226,20 @@ public class VentanaPrincipal extends JFrame implements IVista {
 				controlador.cartasMostradas();
 			}
 		});
-	
-btnIntercambiarCartas.addActionListener(new ActionListener() {
-			
+
+		btnIntercambiarCartas.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				int jugadorOrigen = Integer.valueOf(JOptionPane.showInputDialog("Jugador?"));
 				int numeroCarta = Integer.valueOf(JOptionPane.showInputDialog("Carta?"));
 				controlador.intercambiarCartas(jugadorEnTurno,jugadorOrigen,numeroCarta);
-					//controlador.jugadorDeseaIntercambiarCarta(jugadorEnTurno);
-					//intercambiarCartaActivado = true;
-					//JOptionPane.showMessageDialog(this, "Seleccione la carta que desea intercambiar");
+				//controlador.jugadorDeseaIntercambiarCarta(jugadorEnTurno);
+				//intercambiarCartaActivado = true;
+				//JOptionPane.showMessageDialog(this, "Seleccione la carta que desea intercambiar");
 			}
 		});
-	btnVerCarta.addActionListener(new ActionListener() {
-			
+		
+		btnVerCarta.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				controlador.jugadorDeseaVerCarta(jugadorEnTurno);
@@ -237,12 +247,13 @@ btnIntercambiarCartas.addActionListener(new ActionListener() {
 				mostrarMensaje("Seleccione la carta que desea ver", "Ok");	
 			}
 		});
+		
 		btnFinDeTurno.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseClicked(MouseEvent e) {
 			}
 		});
-		
+
 		btnEspejito.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseClicked(MouseEvent e) {
@@ -253,22 +264,24 @@ btnIntercambiarCartas.addActionListener(new ActionListener() {
 					espejitoActivado = false;
 					btnEspejito.setText("Espejito");
 				}
-					
-					
 			}
 		});
+		
 		btnAgregarJugador.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
 				String nombreJugador = JOptionPane.showInputDialog("Ingrese el nombre del jugador ");
-				controlador.agregarJugador(nombreJugador);}
-			});
+				controlador.agregarJugador(nombreJugador);
+			}
+		});
+		
 		btnComenzarJuego.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
-				controlador.jugar();}
+				controlador.jugar();
+			}
 		});
-		
+
 		btnCubo.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
@@ -276,7 +289,7 @@ btnIntercambiarCartas.addActionListener(new ActionListener() {
 				btnCubo.setVisible(false);
 			}
 		});
-		
+
 		mntmAgregarJugador.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
@@ -473,9 +486,10 @@ btnIntercambiarCartas.addActionListener(new ActionListener() {
 		this.jugadores = jugadores;
 		int index = 0;
 		String[] strJugadores = new String[controlador.cantidadJugadores()];
+		DefaultTableModel model = new DefaultTableModel(new Object[]{"Nombre", "Estado", "Puntaje", "En Turno"},0);
 		for (Jugador jugador:jugadores) 
-			strJugadores[index++] = jugador.getNombre() + " " + jugador.getEstado().toString() + " " +jugador.getPuntaje();
-		playerList.setListData(strJugadores);
+			model.addRow(new Object[] {jugador.getNombre(),jugador.getEstado().toString(),jugador.getPuntaje(),jugador.isEnTurno()?"X":""});
+		playerTable.setModel(model);
 	}
 	
 	@Override

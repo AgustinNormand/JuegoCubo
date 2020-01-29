@@ -95,18 +95,21 @@ public class Juego extends ObservableRemoto implements JuegoPublico {
 		}
 		@Override
 		public void jugarMano() throws RemoteException {
-				jugadorEnTurno = siguienteJugadorActivo();
-				if (jugadorEnTurno == -1) {
-					estado = estadoJuego.TERMINADO;
-					notificarObservadores(posiblesCambios.ESTADO_JUEGO);
-					notificarObservadores(posiblesCambios.JUEGO_TERMINADO);
-				}
+			jugadorEnTurno = siguienteJugadorActivo();
+			if (jugadorEnTurno == -1) {
+				estado = estadoJuego.TERMINADO;
+				notificarObservadores(posiblesCambios.ESTADO_JUEGO);
+				notificarObservadores(posiblesCambios.JUEGO_TERMINADO);
+			}
+			else {
+				if (jugadorEnTurno == jugadorQueDijoCubo) 
+					finalizarMano();
 				else {
-					if (jugadorEnTurno == jugadorQueDijoCubo) 
-						finalizarMano();
-					else
-						notificarObservadores(posiblesCambios.NUEVO_TURNO_JUGADOR);
+					jugadores.get(jugadorEnTurno).setEnTurno(true);
+					notificarObservadores(posiblesCambios.ACTUALIZAR_LISTA_JUGADORES);
+					notificarObservadores(posiblesCambios.NUEVO_TURNO_JUGADOR);
 				}
+			}
 		}
 		@Override
 		public int getJugadorEnTurno() {
@@ -122,6 +125,7 @@ public class Juego extends ObservableRemoto implements JuegoPublico {
 			if (jugador.yaLevanto() && jugador.yaTiro()) {
 				jugador.setLevanto(false);
 				jugador.setTiro(false);
+				jugador.setEnTurno(false);
 				jugarMano();
 			}
 		}
