@@ -1,5 +1,8 @@
 
 import java.awt.BorderLayout;
+import java.awt.Dimension;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
@@ -10,6 +13,8 @@ import javax.swing.JTable;
 import javax.swing.JViewport;
 import javax.swing.border.EmptyBorder;
 import javax.swing.table.DefaultTableModel;
+import javax.swing.table.TableColumn;
+import javax.swing.table.TableColumnModel;
 
 import Controlador.Controlador;
 import Controlador.IVista;
@@ -22,6 +27,8 @@ import javax.swing.JMenu;
 import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import javax.swing.JList;
+import javax.swing.Box;
+import javax.swing.BoxLayout;
 import javax.swing.ImageIcon;
 import javax.swing.ListSelectionModel;
 import javax.swing.Timer;
@@ -83,15 +90,18 @@ public class VentanaPrincipal extends JFrame implements IVista {
 		
 		JPanel panel_1 = new JPanel();
 		contentPane.add(panel_1, BorderLayout.EAST);
-		panel_1.setLayout(new MigLayout("", "[grow][grow][grow]", "[grow]"));
+		panel_1.setLayout(new MigLayout("", "[center]", "[center][grow]"));
 		
-		playerList = new JList();
-		playerList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-		//panel_1.add(playerList, "cell 0 0,grow");
 		
 		playerTable = new JTable();
-		panel_1.add(new JScrollPane(playerTable), "cell 0 0");
-		
+		playerScroll = new JScrollPane(playerTable);
+		playerScroll.setMaximumSize(new Dimension(250,7000));
+		playerTable.disable();
+		playerTable.getTableHeader().setResizingAllowed(false);
+		playerTable.getTableHeader().setReorderingAllowed(false);
+		panel_1.add(new JLabel("Jugadores"), "cell 0 0,center");
+		panel_1.add(playerScroll, "cell 0 1,grow");
+
 		JPanel panel_2 = new JPanel();
 		contentPane.add(panel_2, BorderLayout.NORTH);
 		panel_2.setLayout(new MigLayout("", "[][][][][][][]", "[]"));
@@ -170,21 +180,21 @@ public class VentanaPrincipal extends JFrame implements IVista {
 		// Defino el panel de configuracion inicial
 		panelConfiguracion = new JPanel();
 		contentPane.add(panelConfiguracion,BorderLayout.CENTER);
-		panelConfiguracion.setLayout(new MigLayout("", "[][][][][][][][][][][][][center][][][][][][][][][][][][][][]", "[][][][][][][][][][][][]"));
+		panelConfiguracion.setLayout(new MigLayout("", "[grow,center]", "[grow][grow][grow][grow]"));
 		
 		JLabel lblBienvenida = new JLabel("Bienvenido al CUBO");
-		panelConfiguracion.add(lblBienvenida,"cell 12 4");
+		panelConfiguracion.add(lblBienvenida,"cell 0 0");
 		
 		lblInformativo = new JLabel("Debe agregar al menos 2 jugadores para poder jugar");
-		panelConfiguracion.add(lblInformativo,"cell 12 6");
+		panelConfiguracion.add(lblInformativo,"cell 0 1");
 		
 		JButton btnAgregarJugador = new JButton ("Agregar Jugador");
-		panelConfiguracion.add(btnAgregarJugador,"cell 12 7");
+		panelConfiguracion.add(btnAgregarJugador,"cell 0 2");
 	
 		
 		btnComenzarJuego = new JButton ("Comenzar Juego");
 		btnComenzarJuego.setVisible(false); //Lo hago visible cuando el juego sea JUGABLE
-		panelConfiguracion.add(btnComenzarJuego,"cell 12 8");
+		panelConfiguracion.add(btnComenzarJuego,"cell 0 3");
 	
 		//
 		
@@ -324,7 +334,6 @@ public class VentanaPrincipal extends JFrame implements IVista {
 		jugadores = controlador.getJugadores();
 		int jugadorAMostrarCarta = controlador.getJugadorAMostrarCarta();
 		imprimirCartas(jugadores.get(jugadorAMostrarCarta));
-		playerList.setSelectedIndex(jugadorAMostrarCarta);
 		
 	}
 	
@@ -418,8 +427,6 @@ public class VentanaPrincipal extends JFrame implements IVista {
 		btnIntercambiarCartas.setVisible(false);
 		btnCartasVistas.setVisible(false);
 		
-		playerList.setSelectedIndex(numeroJugador);
-		
 		jugadorEnTurno = numeroJugador;
 		
 		imprimirCartas(jugadores.get(jugadorEnTurno));
@@ -484,12 +491,17 @@ public class VentanaPrincipal extends JFrame implements IVista {
 	@Override
 	public void actualizarListaJugadores(ArrayList<Jugador> jugadores) {
 		this.jugadores = jugadores;
-		int index = 0;
-		String[] strJugadores = new String[controlador.cantidadJugadores()];
-		DefaultTableModel model = new DefaultTableModel(new Object[]{"Nombre", "Estado", "Puntaje", "En Turno"},0);
+		
+		Object[] columnNames = new Object[]{"Nombre", "Estado", "Puntaje", "En Turno"};
+		DefaultTableModel model = new DefaultTableModel(columnNames,0);
+		playerTable.setModel(model);
+		playerTable.getColumn("Nombre").setMaxWidth(75);;
+		playerTable.getColumn("Estado").setMaxWidth(75);
+		playerTable.getColumn("Puntaje").setMaxWidth(55);
+		playerTable.getColumn("En Turno").setMaxWidth(65);
+		
 		for (Jugador jugador:jugadores) 
 			model.addRow(new Object[] {jugador.getNombre(),jugador.getEstado().toString(),jugador.getPuntaje(),jugador.isEnTurno()?"X":""});
-		playerTable.setModel(model);
 	}
 	
 	@Override

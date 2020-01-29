@@ -52,6 +52,8 @@ public class Juego extends ObservableRemoto implements JuegoPublico {
 			jugador.recivirCarta(mazo.getCartaMazo(true));
 			jugador.recivirCarta(mazo.getCartaMazo(false));
 			jugador.recivirCarta(mazo.getCartaMazo(false));
+			jugador.setEnTurno(true);
+			notificarObservadores(posiblesCambios.ACTUALIZAR_LISTA_JUGADORES);
 			notificarObservadores(posiblesCambios.NUEVAS_CARTAS_JUGADOR_A_MOSTRAR_CARTA);
 			notificarObservadores(posiblesCambios.VERIFICAR_VIO_CARTA);
 		}
@@ -65,6 +67,8 @@ public class Juego extends ObservableRemoto implements JuegoPublico {
 			//notificarObservadores(posiblesCambios.VERIFICAR_TODOS_LISTOS);
 			Jugador jugador = jugadores.get(indiceJugadorAMostrarCarta);
 			jugador.ocultarCartas();
+			jugador.setEnTurno(false);
+			notificarObservadores(posiblesCambios.ACTUALIZAR_LISTA_JUGADORES);
 			notificarObservadores(posiblesCambios.NUEVAS_CARTAS_JUGADOR_A_MOSTRAR_CARTA);
 			indiceJugadorAMostrarCarta++;
 			if (indiceJugadorAMostrarCarta == jugadores.size()) {
