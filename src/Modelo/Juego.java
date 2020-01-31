@@ -48,13 +48,15 @@ public class Juego extends ObservableRemoto implements JuegoPublico {
 		@Override
 		public void repartirCartas() throws RemoteException{
 			Jugador jugador = jugadores.get(indiceJugadorAMostrarCarta);
-			jugador.recivirCarta(mazo.getCartaMazo(true));
-			jugador.recivirCarta(mazo.getCartaMazo(true));
 			jugador.recivirCarta(mazo.getCartaMazo(false));
 			jugador.recivirCarta(mazo.getCartaMazo(false));
+			jugador.recivirCarta(mazo.getCartaMazo(true));
+			jugador.recivirCarta(mazo.getCartaMazo(true));
+			notificarObservadores(posiblesCambios.NUEVAS_CARTAS_JUGADOR_A_MOSTRAR_CARTA);
+			
 			jugador.setEnTurno(true);
 			notificarObservadores(posiblesCambios.ACTUALIZAR_LISTA_JUGADORES);
-			notificarObservadores(posiblesCambios.NUEVAS_CARTAS_JUGADOR_A_MOSTRAR_CARTA);
+			
 			notificarObservadores(posiblesCambios.VERIFICAR_VIO_CARTA);
 		}
 		
@@ -110,8 +112,10 @@ public class Juego extends ObservableRemoto implements JuegoPublico {
 					finalizarMano();
 				else {
 					jugadores.get(jugadorEnTurno).setEnTurno(true);
+					notificarObservadores(posiblesCambios.NUEVAS_CARTAS_JUGADORES);//Es para mostrar las cartas de los otros
+					
 					notificarObservadores(posiblesCambios.ACTUALIZAR_LISTA_JUGADORES);
-					notificarObservadores(posiblesCambios.NUEVO_TURNO_JUGADOR);
+					notificarObservadores(posiblesCambios.NUEVO_TURNO_JUGADOR); 
 				}
 			}
 		}
@@ -214,9 +218,12 @@ public class Juego extends ObservableRemoto implements JuegoPublico {
 				estado = estadoJuego.JUGABLE;
 				notificarObservadores(posiblesCambios.ESTADO_JUEGO);
 			}
-			jugadores.add(new Jugador(nombre));
-			notificarObservadores(posiblesCambios.ACTUALIZAR_LISTA_JUGADORES);
-			notificarObservadores(posiblesCambios.NUEVO_JUGADOR);
+			if (jugadores.size() != 4) {
+				jugadores.add(new Jugador(nombre));
+				notificarObservadores(posiblesCambios.ACTUALIZAR_LISTA_JUGADORES);
+				notificarObservadores(posiblesCambios.NUEVO_JUGADOR);
+			} else
+				arrojarError("Alcanzaste la cantidad maxima de jugadores.");
 		}
 		private int siguienteJugadorActivo() {
 			int activo = -1;

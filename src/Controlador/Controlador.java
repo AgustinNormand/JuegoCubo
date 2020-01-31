@@ -34,7 +34,12 @@ public class Controlador implements IControladorRemoto{
 	public void hayCambiosEn(Object cambio) {
 		switch ((posiblesCambios) cambio) {
 		case NUEVAS_CARTAS_JUGADORES:
-			vista.nuevasCartasJugadores();
+			try {
+				vista.nuevasCartasJugadores(juego.getJugadores(), juego.getJugadorEnTurno());
+			} catch (RemoteException e2) {
+				// TODO Auto-generated catch block
+				e2.printStackTrace();
+			}
 			break;
 		case ACTUALIZAR_LISTA_JUGADORES:
 			try {

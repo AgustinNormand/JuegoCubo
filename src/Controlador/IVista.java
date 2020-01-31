@@ -6,7 +6,7 @@ import Modelo.Carta;
 import Modelo.Jugador;
 
 public interface IVista {
-	void nuevasCartasJugadores();
+	void nuevasCartasJugadores(ArrayList<Jugador> jugadores, int jugadorEnTurno);
 	void nuevoEstadoJuego(String estado);
 	void nuevoTurnoJugador(int numeroJugador);
 	void nuevaCartaDescartada(Carta cartaDescartada);
