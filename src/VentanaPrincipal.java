@@ -57,6 +57,7 @@ public class VentanaPrincipal extends JFrame implements IVista {
 	private JButton btnCartasVistas;
 	private JButton btnIntercambiarCartas;
 	private JButton btnVerCarta;
+	private boolean intercambiarCartaActivado;
 	
 	private boolean espejitoActivado = false;
 	private boolean verCartaActivado = false;
@@ -226,6 +227,12 @@ public class VentanaPrincipal extends JFrame implements IVista {
 
 		JMenuItem mntmComenzarJuego = new JMenuItem("Comenzar Juego");
 		mnArchivo.add(mntmComenzarJuego);
+		
+		JMenuItem mntmGuardarPartida = new JMenuItem("Guardar Partida");
+		mnArchivo.add(mntmGuardarPartida);
+		
+		JMenuItem mntmCargarPartida = new JMenuItem("Cargar Partida");
+		mnArchivo.add(mntmCargarPartida);
 
 		JMenuItem mntmSalir = new JMenuItem("Salir");
 		mnArchivo.add(mntmSalir);
@@ -254,14 +261,11 @@ public class VentanaPrincipal extends JFrame implements IVista {
 		});
 
 		btnIntercambiarCartas.addActionListener(new ActionListener() {
+
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				int jugadorOrigen = Integer.valueOf(JOptionPane.showInputDialog("Jugador?"));
-				int numeroCarta = Integer.valueOf(JOptionPane.showInputDialog("Carta?"));
-				controlador.intercambiarCartas(jugadorEnTurno,jugadorOrigen,numeroCarta);
-				//controlador.jugadorDeseaIntercambiarCarta(jugadorEnTurno);
-				//intercambiarCartaActivado = true;
-				//JOptionPane.showMessageDialog(this, "Seleccione la carta que desea intercambiar");
+				intercambiarCartaActivado = true;
+				btnIntercambiarCartas.setText("Cancelar Intercambio");
 			}
 		});
 		
@@ -339,6 +343,20 @@ public class VentanaPrincipal extends JFrame implements IVista {
 				System.exit(0);
 			}
 		});
+		mntmGuardarPartida.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent arg0) {
+				controlador.guardarPartida();
+			}
+		});
+		mntmCargarPartida.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent arg0) {
+				controlador.cargarPartida();
+			}
+		});
+		
+		
 		//
 	}
 	
@@ -434,26 +452,31 @@ public class VentanaPrincipal extends JFrame implements IVista {
 				lblCarta.addMouseListener(new MouseAdapter() {
 				@Override
 				public void mouseClicked(MouseEvent e) {
-					if ((espejitoActivado) && (verCartaActivado)) 
-						error("No es posible hacer espejito y ver una carta al mismo tiempo.");
-					if (!espejitoActivado && !verCartaActivado)
-						controlador.descartarCarta(jugadorEnTurno, Integer.valueOf(lblCarta.getName()));
-					if (espejitoActivado && !verCartaActivado) {
-							controlador.espejito(jugadorEnTurno, Integer.valueOf(lblCarta.getName()));
-							espejitoActivado = false;
-							btnEspejito.setText("Espejito");}
-					if (!espejitoActivado && verCartaActivado) {
-						controlador.mostrarCarta(jugadorEnTurno, Integer.valueOf(lblCarta.getName()));
-						verCartaActivado = false;}
+					if (espejitoActivado && !verCartaActivado && !intercambiarCartaActivado) {
+						controlador.espejito(jugadorEnTurno, Integer.valueOf(lblCarta.getName()));
+						espejitoActivado = false;
+						btnEspejito.setText("Espejito");
+					} else
+						if (!espejitoActivado && verCartaActivado && !intercambiarCartaActivado) {
+							controlador.mostrarCarta(jugadorEnTurno, Integer.valueOf(lblCarta.getName()));
+							verCartaActivado = false;
+						} else
+							if (!espejitoActivado && !verCartaActivado && intercambiarCartaActivado) {
+								controlador.intercambiarCartasDestino(jugador, lblCarta.getName());
+								//controlador.intercambiarCartasOrigen(jugador, lblCarta.getName());
+								//Falta hacerlo
+							} else
+								if (!espejitoActivado && !verCartaActivado && !intercambiarCartaActivado) 
+									controlador.descartarCarta(jugadorEnTurno, Integer.valueOf(lblCarta.getName()));
+								else
+									error("Realize de a una sola accion.");
 					}});
 			} else {
 				lblCarta.addMouseListener(new MouseAdapter() {
-				private boolean intercambiarCartaActivado;
-
 				@Override
 				public void mouseClicked(MouseEvent e) {
 					if (intercambiarCartaActivado) {
-						
+						controlador.intercambiarCartasDestino(jugador, lblCarta.getName());
 					}
 				}
 					

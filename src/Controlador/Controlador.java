@@ -283,15 +283,24 @@ public class Controlador implements IControladorRemoto{
 		}
 	}
 
-	public void intercambiarCartas(int jugadorEnTurno, int jugadorOrigen, int numeroCarta) {
+	public void intercambiarCartasDestino(Jugador jugadorDestino, String numeroCarta) {
 		try {
-			juego.intercambiarCartas(jugadorEnTurno,jugadorOrigen,numeroCarta);
+			juego.intercambiarCartasDestino(jugadorDestino,numeroCarta);
 		} catch (RemoteException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 	}
-
+	/*
+	public void intercambiarCartasOrigen(Jugador jugadorDestino, String numeroCarta) {
+		try {
+			juego.intercambiarCartasOrigen(jugadorDestino,numeroCarta);
+		} catch (RemoteException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+	 */
 	@Override
 	public void actualizar(IObservableRemoto observable, Object arg0){
 		hayCambiosEn(arg0);
@@ -321,6 +330,26 @@ public class Controlador implements IControladorRemoto{
 			e.printStackTrace();
 		}
 		return aux;
+	}
+
+	public void guardarPartida() {
+		try {
+			juego.guardarPartida();
+		} catch (RemoteException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+
+	public void cargarPartida() {
+		try {
+			juego.cargarPartida();
+		} catch (RemoteException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		// TODO Auto-generated method stub
+		
 	}
 
 }

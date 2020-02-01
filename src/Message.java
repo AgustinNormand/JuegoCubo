@@ -1,4 +1,5 @@
 import java.awt.BorderLayout;
+import java.awt.Dimension;
 import java.awt.EventQueue;
 
 import javax.swing.JFrame;
@@ -48,6 +49,5 @@ public class Message extends JFrame {
 		JLabel lblNewLabel = new JLabel(mensajeLabel);
 		panel.add(lblNewLabel, "cell 1 1,alignx center,aligny center");
 		setVisible(true);
-		
-	}
+		setMinimumSize(new Dimension(lblNewLabel.getSize().width+40,140));	}
 }

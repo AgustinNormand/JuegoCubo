@@ -1,5 +1,13 @@
 package Modelo;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+import java.io.Serializable;
 import java.rmi.RemoteException;
 import java.util.ArrayList;
 import java.util.logging.Level;
@@ -8,7 +16,7 @@ import java.util.logging.Logger;
 import ModeloControlador.posiblesCambios;
 import ar.edu.unlu.rmimvc.observer.ObservableRemoto;
 
-public class Juego extends ObservableRemoto implements JuegoPublico {
+public class Juego extends ObservableRemoto implements JuegoPublico,Serializable {
 	private final static Logger LOGGER = Logger.getLogger("Juego");
 	private Mazo mazo = new Mazo();
 	private ArrayList<Jugador> jugadores;
@@ -175,7 +183,7 @@ public class Juego extends ObservableRemoto implements JuegoPublico {
 
 						if (cartaMazo.getValor() == 10) 
 							notificarObservadores(posiblesCambios.PUEDE_VER_CARTA);
-						if (cartaMazo.getValor() == 11) 
+						if (cartaMazo.getValor() != 11) 
 							notificarObservadores(posiblesCambios.PUEDE_INTERCAMBIAR_CARTA);
 					} else
 						arrojarError("El mazo no tiene mas cartas.");
@@ -256,25 +264,18 @@ public class Juego extends ObservableRemoto implements JuegoPublico {
 			}
 			return activos;
 		}
-		//@Override
-		//public void notificarObservadores(Object cambio) {
-		//	for(IObservador observador:observadores)
-		//		try {
-		//			observador.actualizar(this,cambio);
-		//		} catch (RemoteException e) {
-		//			// TODO Auto-generated catch block
-		//			e.printStackTrace();
-		//		}
-		//}
+		
 		@Override
 		public String getEstado () {
 			return estado.name();
 		}
+		
 		@Override
 		public Carta getCartaDescartada() {
 			Carta carta = mazo.showCartaDescartada();
 			return carta;
 		}
+		
 		@Override
 		public boolean isJugable() {
 			if (estado == estadoJuego.TERMINADO) 
@@ -419,32 +420,35 @@ public class Juego extends ObservableRemoto implements JuegoPublico {
 		
 	@Override
 	public void espejito(int numeroJugador, int numeroCarta) throws RemoteException {
-		numeroCarta = numeroCarta - 1; // Equivalencia
-		if (mazo.hayCartaDescartada()) {
-			if (numeroJugador >= 0 && numeroJugador < jugadores.size()) {
-				Jugador jugadorEspejito = jugadores.get(numeroJugador);
-				if (jugadorEspejito.isJugando()) {
-					ArrayList<Carta> cartasJugadorEspejito = jugadorEspejito.getCartas();
-					if (numeroCarta >= 0 && numeroCarta < cartasJugadorEspejito.size()) {
-						Carta cartaEspejito = cartasJugadorEspejito.get(numeroCarta);
-						Carta cartaRetorno = mazo.espejito(cartaEspejito);
-						if (cartaRetorno != null) {
-							mostrarCarta(numeroJugador, numeroCarta+1);
-							jugadorEspejito.recivirCarta(cartaRetorno);
-							mostrarCarta(numeroJugador,jugadorEspejito.getCartas().indexOf(cartaRetorno)+1);}
-						else
-							jugadorEspejito.quitarCarta(numeroCarta);
-						notificarObservadores(posiblesCambios.NUEVA_CARTA_DESCARTADA);
-						notificarObservadores(posiblesCambios.NUEVAS_CARTAS_JUGADORES);
-						notificarObservadores(posiblesCambios.ACTUALIZAR_LISTA_JUGADORES);
+		if (!estado.equals(estadoJuego.JUGANDO)) {
+			numeroCarta = numeroCarta - 1; // Equivalencia
+			if (mazo.hayCartaDescartada()) {
+				if (numeroJugador >= 0 && numeroJugador < jugadores.size()) {
+					Jugador jugadorEspejito = jugadores.get(numeroJugador);
+					if (jugadorEspejito.isJugando()) {
+						ArrayList<Carta> cartasJugadorEspejito = jugadorEspejito.getCartas();
+						if (numeroCarta >= 0 && numeroCarta < cartasJugadorEspejito.size()) {
+							Carta cartaEspejito = cartasJugadorEspejito.get(numeroCarta);
+							Carta cartaRetorno = mazo.espejito(cartaEspejito);
+							if (cartaRetorno != null) {
+								mostrarCarta(numeroJugador, numeroCarta+1);
+								jugadorEspejito.recivirCarta(cartaRetorno);
+								mostrarCarta(numeroJugador,jugadorEspejito.getCartas().indexOf(cartaRetorno)+1);}
+							else
+								jugadorEspejito.quitarCarta(numeroCarta);
+							notificarObservadores(posiblesCambios.NUEVA_CARTA_DESCARTADA);
+							notificarObservadores(posiblesCambios.NUEVAS_CARTAS_JUGADORES);
+							notificarObservadores(posiblesCambios.ACTUALIZAR_LISTA_JUGADORES);
+						} else
+							arrojarError("Error en juego > espejito() > numeroCarta");
 					} else
-						arrojarError("Error en juego > espejito() > numeroCarta");
+						arrojarError("Error en juego > espejito() > jugadorNoActivo");
 				} else
-					arrojarError("Error en juego > espejito() > jugadorNoActivo");
+					arrojarError("Error en juego > espejito() > numeroJugador");
 			} else
-				arrojarError("Error en juego > espejito() > numeroJugador");
+				arrojarError("No se puede hacer espejito a una carta nula");
 		} else
-			arrojarError("No se puede hacer espejito a una carta nula");
+			arrojarError("Primero debes ver las cartas");
 	}
 
 		@Override
@@ -484,7 +488,6 @@ public class Juego extends ObservableRemoto implements JuegoPublico {
 			notificarObservadores(posiblesCambios.VERIFICAR_VIO_CARTA);
 		}
 		public void cartaMostrada() throws RemoteException {
-			//cartaAMostrar.setVisible(false);
 			jugadorAMostrarCarta.ocultarCartas();
 			notificarObservadores(posiblesCambios.NUEVAS_CARTAS_JUGADORES);
 			estado = estadoJuego.JUGANDO;
@@ -492,7 +495,73 @@ public class Juego extends ObservableRemoto implements JuegoPublico {
 		}
 
 		@Override
-		public void intercambiarCartas(int jugadorEnTurno, int jugadorOrigen, int numeroCarta) {
-			
+		public void intercambiarCartasDestino(Jugador jugadorDestino, String numeroCarta) throws RemoteException {
+			if (jugadorEnTurno == this.jugadorEnTurno) {
+				if (!estado.equals(estadoJuego.INTERCAMBIANDO_CARTAS)) {
+					estado = estadoJuego.INTERCAMBIANDO_CARTAS;
+					notificarObservadores(posiblesCambios.ESTADO_JUEGO);
+					arrojarError("Seleccione por que carta desea intercambiar");
+				} else {
+					estado = estadoJuego.JUGANDO;
+					notificarObservadores(posiblesCambios.ESTADO_JUEGO);
+					arrojarError("Aca deberia intercambiar");
+				}
+			} else
+				arrojarError("No es el turno de "+jugadores.get(jugadorEnTurno)+"!");
 		}
+		
+		@Override
+		public void guardarPartida() throws RemoteException {
+		      try
+		      {
+		         FileOutputStream file = null;
+		         file = new FileOutputStream("tempFile.tmp");
+		         
+		         ObjectOutputStream out = null;
+		         out = new ObjectOutputStream(file);
+		         
+		     	 //out.writeObject(jugadores);
+		     	 out.writeObject(this);
+		     	 out.close();
+		      } catch (IOException e)
+		      {
+		         e.printStackTrace();
+		      }
+		}
+	@Override
+	public void cargarPartida() throws RemoteException{
+	      try
+	      {
+	    	 File temp = new File("tempFile.tmp");
+	         boolean exists = temp.exists();
+	         if (exists) {
+	        	 FileInputStream file = new FileInputStream("tempFile.tmp");
+	        	 ObjectInputStream in = new ObjectInputStream(file);
+	        	 //jugadores = (ArrayList<Jugador>) in.readObject();
+	        	 cargarJuego((Juego) in.readObject());
+	        	 temp.delete();
+	         } else
+	        	 arrojarError("No hay partidas para cargar.");
+	      } catch (IOException e)
+	      {
+	    	 arrojarError("Error en cargarPartida");
+	         e.printStackTrace();
+	      } catch (ClassNotFoundException e) {
+	    	arrojarError("Error en cargarPartida");
+			e.printStackTrace();
+		}	
+	}
+	
+	private void cargarJuego(Juego juegoNuevo) {
+		this.cartaAMostrar = juegoNuevo.cartaAMostrar;
+		this.estado = juegoNuevo.estado;
+		this.ganador = juegoNuevo.ganador;
+		this.indiceJugadorAMostrarCarta = juegoNuevo.indiceJugadorAMostrarCarta;
+		this.jugadorEnTurno = juegoNuevo.jugadorEnTurno;
+		this.jugadores = juegoNuevo.jugadores;
+		this.mazo = juegoNuevo.mazo;
+		this.jugadorQueDijoCubo = juegoNuevo.jugadorQueDijoCubo;
+		this.jugadorAMostrarCarta = juegoNuevo.jugadorAMostrarCarta;
+		this.errorMessage = juegoNuevo.errorMessage;
+	}
 }
