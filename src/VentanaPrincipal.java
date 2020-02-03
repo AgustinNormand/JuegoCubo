@@ -2,8 +2,6 @@
 import java.awt.BorderLayout;
 import java.awt.Component;
 import java.awt.Dimension;
-import java.awt.GridBagConstraints;
-import java.awt.GridBagLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
@@ -11,11 +9,8 @@ import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
-import javax.swing.JViewport;
 import javax.swing.border.EmptyBorder;
 import javax.swing.table.DefaultTableModel;
-import javax.swing.table.TableColumn;
-import javax.swing.table.TableColumnModel;
 
 import Controlador.Controlador;
 import Controlador.IVista;
@@ -27,12 +22,7 @@ import javax.swing.JMenuBar;
 import javax.swing.JMenu;
 import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
-import javax.swing.JList;
-import javax.swing.Box;
-import javax.swing.BoxLayout;
 import javax.swing.ImageIcon;
-import javax.swing.ListSelectionModel;
-import javax.swing.Timer;
 import javax.swing.JButton;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
@@ -49,7 +39,7 @@ public class VentanaPrincipal extends JFrame implements IVista {
 	private JButton btnCubo;
 	private JLabel lblJugadorcubo;
 	private JLabel lblInformativo;
-	
+	private int vistaDelJugadorNro = -1;
 	private int jugadorEnTurno;
 	private JButton btnEspejito;
 	private JLabel lblCartaMazo;
@@ -67,8 +57,6 @@ public class VentanaPrincipal extends JFrame implements IVista {
 	private JButton btnComenzarJuego;
 	private JScrollPane playerScroll;
 	private JTable playerTable;
-	private JPanel panel_cartas_jugador1;
-	private JPanel cartasJugador1;
 	private JPanel panelMazo;
 	private JPanel panelIzquierdo;
 	
@@ -241,22 +229,24 @@ public class VentanaPrincipal extends JFrame implements IVista {
 		lblCartaMazo.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseClicked(MouseEvent e) {
-				controlador.levantarDelMazo(jugadorEnTurno);
+				if (jugadorEnTurno == vistaDelJugadorNro)
+					controlador.levantarDelMazo(jugadorEnTurno);
 			}
 		});
 		
 		lblCartaDescartada.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseClicked(MouseEvent e) {
-				controlador.levantarDeDescartadas(jugadorEnTurno);
+				if (vistaDelJugadorNro == jugadorEnTurno)
+					controlador.levantarDeDescartadas(jugadorEnTurno);
 			}
 		});
 		
 		btnCartasVistas.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				btnCartasVistas.setVisible(false);
 				controlador.cartasMostradas();
+				btnCartasVistas.setVisible(false);
 			}
 		});
 
@@ -301,8 +291,12 @@ public class VentanaPrincipal extends JFrame implements IVista {
 		btnAgregarJugador.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
-				String nombreJugador = JOptionPane.showInputDialog("Ingrese el nombre del jugador ");
-				controlador.agregarJugador(nombreJugador);
+				if (vistaDelJugadorNro == -1) {
+					String nombreJugador = JOptionPane.showInputDialog("Ingrese el nombre del jugador ");
+					if (nombreJugador != "") 
+						vistaDelJugadorNro = controlador.agregarJugador(nombreJugador);
+				} else
+					error("Solo se permite 1 jugador por pantalla");
 			}
 		});
 		
@@ -366,14 +360,20 @@ public class VentanaPrincipal extends JFrame implements IVista {
 	}
 	
 	@Override
-	public void nuevasCartasJugadorAMostrarCartas() {
-		jugadores = controlador.getJugadores();
-		Jugador jugadorAMostrarCarta = jugadores.get(controlador.getJugadorAMostrarCarta());
-		Component[] componentes = panelIzquierdo.getComponents(); 
-		panelIzquierdo.remove(componentes[1]);
-		panelIzquierdo.add(new JLabel("Tus Cartas, "+jugadorAMostrarCarta.getNombre()), "cell 0 0,center");
-		imprimirCartas(jugadorAMostrarCarta,panelCartasPropias,true);
-		
+	public void nuevasCartasJugadorAMostrarCartas(int jugadorAMostrarCartas) {
+		if (jugadorAMostrarCartas == vistaDelJugadorNro) {
+			btnCartasVistas.setVisible(true);
+			Jugador jugadorAMostrarCarta = jugadores.get(jugadorAMostrarCartas);
+			Component[] componentes = panelIzquierdo.getComponents(); 
+			panelIzquierdo.remove(componentes[1]);
+			panelIzquierdo.add(new JLabel("Tus Cartas, "+jugadorAMostrarCarta.getNombre()), "cell 0 0,center");
+			imprimirCartas(jugadorAMostrarCarta,panelCartasPropias);
+		} else {
+			Component[] componentes = panelIzquierdo.getComponents(); 
+			panelIzquierdo.remove(componentes[1]);
+			panelIzquierdo.add(new JLabel("Tus Cartas, "+jugadores.get(vistaDelJugadorNro).getNombre()), "cell 0 0,center");
+			imprimirCartas(jugadores.get(vistaDelJugadorNro),panelCartasPropias);
+		}
 	}
 
 	@Override
@@ -385,6 +385,7 @@ public class VentanaPrincipal extends JFrame implements IVista {
 		}
 		if (estadoJuego.equals("JUGANDO")) {
 			lblJugadorcubo.setVisible(true);
+			btnEspejito.setVisible(true);
 			lblDijoCubo.setVisible(true);
 		}
 		if (estadoJuego.equals("MOSTRANDO_CARTAS_INICIALES"))
@@ -396,14 +397,15 @@ public class VentanaPrincipal extends JFrame implements IVista {
 	}
 	
 	@Override
-	public void nuevasCartasJugadores(ArrayList<Jugador> jugadores, int jugadorEnTurno) {
+	public void nuevasCartasJugadores(ArrayList<Jugador> jugadores) {
 		int fila = 0;
 		int columna = 0;
 		panelCentral.removeAll();
 		panelCentral.revalidate();
 		panelCentral.repaint();
 		for (Jugador jugador:jugadores) {
-			if (jugadores.indexOf(jugador) != jugadorEnTurno) {
+			if (jugadores.indexOf(jugador) != vistaDelJugadorNro) {//jugadorEnTurno
+				jugador.ocultarCartas();
 				JPanel panelCartasJugador = new JPanel();
 				JPanel cartasJugador = new JPanel();
 				panelCartasJugador.setLayout(new MigLayout("","[][]","[]"));
@@ -417,7 +419,7 @@ public class VentanaPrincipal extends JFrame implements IVista {
 				panelCartasJugador.add(new JLabel("Cartas de "+jugador.getNombre()),"cell 0 0,center");
 				panelCartasJugador.add(scrollCartasJugador,"cell 0 1,grow");
 				panelCentral.add(panelCartasJugador,"cell "+columna+" "+fila);
-				imprimirCartas(jugador,cartasJugador,false);
+				imprimirCartas(jugador,cartasJugador);
 				
 				if (fila == 0 && columna == 0) 
 					fila = 2; 
@@ -429,13 +431,13 @@ public class VentanaPrincipal extends JFrame implements IVista {
 				Component[] componentes = panelIzquierdo.getComponents(); 
 				panelIzquierdo.remove(componentes[1]);
 				panelIzquierdo.add(new JLabel("Tus Cartas, "+jugador.getNombre()), "cell 0 0,center");
-				imprimirCartas(jugador,panelCartasPropias,true);
+				imprimirCartas(jugador,panelCartasPropias);
 			}
 		}
 		panelCentral.add(panelMazo,"cell 0 1");
 	}
 	
-	public void imprimirCartas(Jugador jugador,JPanel panelCartas, boolean cartasDelJugadorEnTurno) {
+	public void imprimirCartas(Jugador jugador,JPanel panelCartas) {
 		panelCartas.removeAll();
 		panelCartas.revalidate();
 		panelCartas.repaint();
@@ -448,17 +450,17 @@ public class VentanaPrincipal extends JFrame implements IVista {
 			lblCarta.setIcon(carta.getIcon());
 			lblCarta.setVisible(true);
 			lblCarta.setName(Integer.toString(numeroCarta++));
-			if (cartasDelJugadorEnTurno) {
+			if (jugadorEnTurno == vistaDelJugadorNro) {
 				lblCarta.addMouseListener(new MouseAdapter() {
 				@Override
 				public void mouseClicked(MouseEvent e) {
 					if (espejitoActivado && !verCartaActivado && !intercambiarCartaActivado) {
-						controlador.espejito(jugadorEnTurno, Integer.valueOf(lblCarta.getName()));
+						controlador.espejito(vistaDelJugadorNro, Integer.valueOf(lblCarta.getName()));
 						espejitoActivado = false;
 						btnEspejito.setText("Espejito");
 					} else
 						if (!espejitoActivado && verCartaActivado && !intercambiarCartaActivado) {
-							controlador.mostrarCarta(jugadorEnTurno, Integer.valueOf(lblCarta.getName()));
+							controlador.mostrarCarta(vistaDelJugadorNro, Integer.valueOf(lblCarta.getName()));
 							verCartaActivado = false;
 						} else
 							if (!espejitoActivado && !verCartaActivado && intercambiarCartaActivado) {
@@ -467,7 +469,7 @@ public class VentanaPrincipal extends JFrame implements IVista {
 								//Falta hacerlo
 							} else
 								if (!espejitoActivado && !verCartaActivado && !intercambiarCartaActivado) 
-									controlador.descartarCarta(jugadorEnTurno, Integer.valueOf(lblCarta.getName()));
+									controlador.descartarCarta(vistaDelJugadorNro, Integer.valueOf(lblCarta.getName()));
 								else
 									error("Realize de a una sola accion.");
 					}});
@@ -475,8 +477,12 @@ public class VentanaPrincipal extends JFrame implements IVista {
 				lblCarta.addMouseListener(new MouseAdapter() {
 				@Override
 				public void mouseClicked(MouseEvent e) {
-					if (intercambiarCartaActivado) {
+					if (intercambiarCartaActivado) 
 						controlador.intercambiarCartasDestino(jugador, lblCarta.getName());
+					if (espejitoActivado) {
+						controlador.espejito(vistaDelJugadorNro, Integer.valueOf(lblCarta.getName()));
+						espejitoActivado = false;
+						btnEspejito.setText("Espejito");
 					}
 				}
 					
@@ -512,20 +518,21 @@ public class VentanaPrincipal extends JFrame implements IVista {
 	}
 	@Override
 	public void nuevoTurnoJugador(int numeroJugador) {
+		jugadorEnTurno = numeroJugador;
+		
 		btnFinDeTurno.setVisible(false);
 		btnCubo.setVisible(false);
+		//btnEspejito.setVisible(false);
 		btnVerCarta.setVisible(false);
 		btnIntercambiarCartas.setVisible(false);
 		btnCartasVistas.setVisible(false);
 		
-		jugadorEnTurno = numeroJugador;
-		
-		imprimirCartas(jugadores.get(jugadorEnTurno),panelCartasPropias,true);
-		
-		if (controlador.puedoDecirCubo()) 
-			btnCubo.setVisible(true);
-		btnEspejito.setVisible(true);
-		
+		if (numeroJugador == vistaDelJugadorNro) {
+			imprimirCartas(jugadores.get(jugadorEnTurno),panelCartasPropias);
+			if (controlador.puedoDecirCubo()) 
+				btnCubo.setVisible(true);
+			btnEspejito.setVisible(true);
+		}
 	}
 
 	@Override
@@ -543,12 +550,10 @@ public class VentanaPrincipal extends JFrame implements IVista {
 	
 	@Override
 	public void verificarVioCarta() {
-		btnCartasVistas.setVisible(true);
 	}
 	
 	@Override
 	public void mostrar2CartasJugadores() { //Esto no me parece que este bien aca 
-		Message msgFrame = new Message(this,"Vio la carta?","Si");
 	}
 	
 	@Override
@@ -570,7 +575,8 @@ public class VentanaPrincipal extends JFrame implements IVista {
 
 	@Override
 	public void error(String errorMessage) {
-		mostrarMensaje(errorMessage,"Ok");
+		if (jugadorEnTurno == vistaDelJugadorNro)
+			mostrarMensaje(errorMessage,"Ok");
 	}
 
 	@Override
@@ -584,15 +590,21 @@ public class VentanaPrincipal extends JFrame implements IVista {
 		this.jugadores = jugadores;
 		
 		Object[] columnNames = new Object[]{"Nombre", "Estado", "Puntaje", "En Turno"};
-		DefaultTableModel model = new DefaultTableModel(columnNames,0);
+		Object[][] data = new Object[jugadores.size()][columnNames.length];
+		int row = 0;
+		for (Jugador jugador:jugadores) {
+			data[row][0] = jugador.getNombre();
+			data[row][1] = jugador.getEstado();
+			data[row][2] = jugador.getPuntaje();
+			data[row][3] = jugador.isEnTurno()?"X":"";
+			row++;
+		}
+		DefaultTableModel model = new DefaultTableModel(data,columnNames);
 		playerTable.setModel(model);
 		playerTable.getColumn("Nombre").setMaxWidth(75);;
 		playerTable.getColumn("Estado").setMaxWidth(75);
 		playerTable.getColumn("Puntaje").setMaxWidth(55);
 		playerTable.getColumn("En Turno").setMaxWidth(65);
-		
-		for (Jugador jugador:jugadores) 
-			model.addRow(new Object[] {jugador.getNombre(),jugador.getEstado().toString(),jugador.getPuntaje(),jugador.isEnTurno()?"X":""});
 	}
 	
 	@Override

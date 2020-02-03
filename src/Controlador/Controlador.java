@@ -35,7 +35,7 @@ public class Controlador implements IControladorRemoto{
 		switch ((posiblesCambios) cambio) {
 		case NUEVAS_CARTAS_JUGADORES:
 			try {
-				vista.nuevasCartasJugadores(juego.getJugadores(), juego.getJugadorEnTurno());
+				vista.nuevasCartasJugadores(juego.getJugadores());
 			} catch (RemoteException e2) {
 				// TODO Auto-generated catch block
 				e2.printStackTrace();
@@ -127,19 +127,25 @@ public class Controlador implements IControladorRemoto{
 			vista.puedeIntercambiarCarta();
 			break;
 		case NUEVAS_CARTAS_JUGADOR_A_MOSTRAR_CARTA:
-			vista.nuevasCartasJugadorAMostrarCartas();
+			try {
+				vista.nuevasCartasJugadorAMostrarCartas(juego.getJugadorAMostrarCarta());
+			} catch (RemoteException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 			break;
 		}
 	}
 
-	public void agregarJugador(String nombre){
+	public int agregarJugador(String nombre){
+		int numeroJugador = -1;
 		try {
-		juego.agregarJugador(nombre);
+		numeroJugador = juego.agregarJugador(nombre);
 		} catch (RemoteException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		
+		return numeroJugador;
 	}
 	public void jugar() {
 		try {

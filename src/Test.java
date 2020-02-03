@@ -25,25 +25,19 @@ public class Test {
 		IVista vista = new VentanaPrincipal(controlador);
 		Cliente cliente = new Cliente("127.0.0.1", 9999, "127.0.0.1", 8888);
 		vista.iniciar();
+		
+		Controlador controlador2 = new Controlador();
+		IVista vista2 = new VentanaPrincipal(controlador2);
+		Cliente cliente2 = new Cliente("127.0.0.1", 7777, "127.0.0.1", 8888);
+		vista2.iniciar();
 		try {
-			cliente.iniciar(controlador); // enlaza el controlador con el modelo remoto 
+			cliente.iniciar(controlador); // enlaza el controlador con el modelo remoto
+			cliente2.iniciar(controlador2);
 		} catch (RemoteException e) {
 			e.printStackTrace();
 		} catch (RMIMVCException e) {
 			e.printStackTrace();
 		}
 		
-		try {
-			modelo.agregarJugador("Pepe");
-		} catch (RemoteException e1) {
-			// TODO Auto-generated catch block
-			e1.printStackTrace();
-		}
-		try {
-			modelo.agregarJugador("Jose");
-		} catch (RemoteException e1) {
-			// TODO Auto-generated catch block
-			e1.printStackTrace();
-		}
 	}
 }

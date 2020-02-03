@@ -14,14 +14,16 @@ public class Jugador implements Cloneable,Serializable{
 	private boolean tiro = false;
 	
 	public Jugador(String nombre) {
-		this(nombre,0,new ArrayList<>(),estadoJugador.JUGANDO,false);
+		this(nombre,0,new ArrayList<>(),estadoJugador.JUGANDO,false,false,false);
 	}
-	public Jugador(String nombre, int puntaje, ArrayList<Carta> cartas, estadoJugador estado,boolean enTurno) {
+	public Jugador(String nombre, int puntaje, ArrayList<Carta> cartas, estadoJugador estado,boolean enTurno,boolean levanto,boolean tiro) {
 		this.nombre = nombre;
 		this.puntaje = puntaje;
 		this.cartas = cartas;
 		this.estado = estado;
 		this.enTurno = enTurno;
+		this.levanto = levanto;
+		this.tiro = tiro;
 	}
 
 	public void recivirCarta(Carta carta) {
@@ -93,7 +95,7 @@ public class Jugador implements Cloneable,Serializable{
 		for (Carta carta:cartas) {
 			cartasDuplicadas.add(carta.duplicar());
 		}
-		Jugador jugadorDuplicado = new Jugador(this.nombre,this.puntaje,cartasDuplicadas,this.estado,this.enTurno);
+		Jugador jugadorDuplicado = new Jugador(this.nombre,this.puntaje,cartasDuplicadas,this.estado,this.enTurno,this.levanto,this.tiro);
 		return jugadorDuplicado;
 	}
 	public boolean yaLevanto() {

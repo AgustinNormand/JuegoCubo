@@ -25,7 +25,7 @@ public interface JuegoPublico extends IObservableRemoto{
 
 	void levantarDeMazo(int indiceJugador) throws RemoteException;
 
-	void agregarJugador(String nombre) throws RemoteException;
+	int agregarJugador(String nombre) throws RemoteException;
 
 //	void notificarObservadores(Object cambio);
 
