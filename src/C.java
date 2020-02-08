@@ -23,7 +23,6 @@ public class C {
 				ips.toArray(),
 				null
 		);
-		/*
 		String port = (String) JOptionPane.showInputDialog(
 				null, 
 				"Seleccione el puerto en el que escuchar peticiones el cliente", "Puerto del cliente", 
@@ -32,7 +31,7 @@ public class C {
 				null,
 				9999
 		);
-		*//*
+		/*
 		String ipServidor = (String) JOptionPane.showInputDialog(
 				null, 
 				"Seleccione la IP en la corre el servidor", "IP del servidor", 
@@ -53,7 +52,7 @@ public class C {
 		
 		Controlador controlador = new Controlador();
 		IVista vista = new VentanaPrincipal(controlador);
-		Cliente cliente = new Cliente(ip, Integer.parseInt("1111"), "192.168.0.220", Integer.parseInt(portServidor));
+		Cliente cliente = new Cliente("127.0.0.1",  Integer.parseInt(port), "127.0.0.1", Integer.parseInt(portServidor));
 		vista.iniciar();
 		try {
 			cliente.iniciar(controlador); // enlaza el controlador con el modelo remoto 

@@ -1,24 +1,24 @@
 import java.awt.BorderLayout;
 import java.awt.Dimension;
-import java.awt.EventQueue;
 
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
 
-import Controlador.IVista;
 import net.miginfocom.swing.MigLayout;
-import javax.swing.BoxLayout;
 import javax.swing.JButton;
 import java.awt.event.ActionListener;
-import java.awt.event.MouseListener;
 import java.awt.event.ActionEvent;
 
-public class Message extends JFrame {
+public class FrameMessage extends JFrame {
+	
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 6609453882836520612L;
+	
 	static final int YES_OPTION = 1; 
-	private boolean updatedResponse = false;
-	private boolean response;
 	private JPanel contentPane;
 	JPanel panel = new JPanel();
 	VentanaPrincipal vista;
@@ -26,7 +26,7 @@ public class Message extends JFrame {
 	/**
 	 * Create the frame.
 	 */
-	public Message(VentanaPrincipal vista,String mensajeLabel,String mensajeBotonAfirmativo) {
+	public FrameMessage(VentanaPrincipal vista,String mensajeLabel,String mensajeBotonAfirmativo) {
 		createFrame(mensajeLabel);
 		JButton btnAfirmativo = new JButton(mensajeBotonAfirmativo);
 		panel.add(btnAfirmativo, "cell 1 2,alignx center,aligny center");

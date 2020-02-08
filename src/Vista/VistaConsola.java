@@ -190,4 +190,34 @@ public class VistaConsola implements IVista{
 		// TODO Auto-generated method stub
 		
 	}
+
+	@Override
+	public void nuevasCartasJugadores(ArrayList<Jugador> jugadores) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void error(String string, int indiceJugadorError) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void nuevasCartasJugadorAMostrarCartas(int jugadorAMostrarCartas) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void seleccionarJugador(ArrayList<Jugador> jugadores) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void comenzoJuego() {
+		// TODO Auto-generated method stub
+		
+	}
 }

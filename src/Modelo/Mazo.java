@@ -5,6 +5,11 @@ import java.util.ArrayList;
 import java.util.Random;
 
 public class Mazo implements Serializable{
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -8034617837934141086L;
+	
 	private ArrayList<Carta> cartas = new ArrayList<Carta>();
 	private int cartaDisponibleMazo = 0;
 	private int cartaDisponibleDescartadas = -1;
@@ -88,7 +93,7 @@ public class Mazo implements Serializable{
 	public Carta espejito(Carta cartaEspejito) {
 		if (cartaDisponibleDescartadas != -1) {
 			Carta cartaDescartada = cartasDescartadas.get(cartaDisponibleDescartadas);
-			if (cartaDescartada.equals(cartaEspejito)) {
+			if (cartaDescartada.getNumero() != cartaEspejito.getNumero()) {
 				descartarCarta(cartaEspejito.duplicar());
 				return null;
 			} else {

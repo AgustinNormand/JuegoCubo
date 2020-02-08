@@ -33,6 +33,17 @@ public class Controlador implements IControladorRemoto{
 
 	public void hayCambiosEn(Object cambio) {
 		switch ((posiblesCambios) cambio) {
+		case COMENZO_JUEGO:
+			vista.comenzoJuego();
+			break;
+		case CARGANDO_JUEGO:
+			try {
+				vista.seleccionarJugador(juego.getJugadoresSinAsignarVista());
+			} catch (RemoteException e3) {
+				// TODO Auto-generated catch block
+				e3.printStackTrace();
+			}
+			break;
 		case NUEVAS_CARTAS_JUGADORES:
 			try {
 				vista.nuevasCartasJugadores(juego.getJugadores());
@@ -73,12 +84,6 @@ public class Controlador implements IControladorRemoto{
 				e1.printStackTrace();
 			}
 			break;
-		case VERIFICAR_TODOS_LISTOS:
-			vista.verificarTodosListos();
-			break;
-		case MOSTRAR_2_CARTAS_JUGADORES:
-			vista.mostrar2CartasJugadores();
-			break;
 		case JUEGO_TERMINADO:
 			try {
 				vista.terminarJuego(juego.getGanador());
@@ -86,9 +91,6 @@ public class Controlador implements IControladorRemoto{
 				// TODO Auto-generated catch block
 				e1.printStackTrace();
 			}
-			break;
-		case LEVANTA_CARTA:
-			vista.cartaLevantada();
 			break;
 		case UN_JUGADOR_DIJO_CUBO:
 			try {
@@ -100,25 +102,11 @@ public class Controlador implements IControladorRemoto{
 			break;
 		case ERROR:
 			try {
-				vista.error(juego.getErrorMessage());
+				vista.error(juego.getErrorMessage(),juego.getIndiceJugadorError());
 			} catch (RemoteException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
-			break;
-		case MANO_TERMINADA:
-			vista.manoTerminada(/*juego.getJugadores()*/);
-			break;
-		case FIN_TURNO_HABILITADO:
-			try {
-				vista.finTurnoHabilitado(juego.getJugadorEnTurno());
-			} catch (RemoteException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-			break;
-		case VERIFICAR_VIO_CARTA:
-			vista.verificarVioCarta();
 			break;
 		case PUEDE_VER_CARTA:
 			vista.puedeVerCarta();
@@ -147,6 +135,16 @@ public class Controlador implements IControladorRemoto{
 		}
 		return numeroJugador;
 	}
+	public int getIndiceJugadorError() {
+		int indiceJugadorError = -1;
+		try {
+			indiceJugadorError = juego.getIndiceJugadorError();
+		} catch (RemoteException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return indiceJugadorError;
+	}
 	public void jugar() {
 		try {
 			juego.jugar();
@@ -166,18 +164,18 @@ public class Controlador implements IControladorRemoto{
 		return false;
 	}
 
-	public void levantarDelMazo(int numeroJugador){
+	public void levantarDelMazo(){
 		try {
-			juego.levantarDeMazo(numeroJugador);
+			juego.levantarDeMazo();
 		} catch (RemoteException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 	}
 
-	public void levantarDeDescartadas(int numeroJugador){
+	public void levantarDeDescartadas(){
 		try {
-			juego.levantarDeDescartadas(numeroJugador);
+			juego.levantarDeDescartadas();
 		} catch (RemoteException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -261,16 +259,6 @@ public class Controlador implements IControladorRemoto{
 		return 0;
 	}
 
-	public boolean puedoFinalizarTurno(int numeroJugador){
-		try {
-			return juego.puedoFinalizarTurno(numeroJugador);
-		} catch (RemoteException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		return false;
-	}
-
 	public void mostrarCarta(int numeroJugador, int cartaAMostrar) {
 		try {
 			juego.mostrarCarta(numeroJugador,cartaAMostrar);
@@ -280,22 +268,24 @@ public class Controlador implements IControladorRemoto{
 		}
 	}
 
-	public void jugadorDeseaVerCarta(int jugadorEnTurno){
+	public boolean jugadorDeseaVerCarta(int jugadorEnTurno){
 		try {
-			juego.jugadorDeseaVerCarta(jugadorEnTurno);
+			return juego.jugadorDeseaVerCarta(jugadorEnTurno);
 		} catch (RemoteException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+		return false;
 	}
 
-	public void intercambiarCartasDestino(Jugador jugadorDestino, String numeroCarta) {
+	public boolean intercambiarCartas(int indiceJugadorOrigen, int indiceCartaOrigen, int indiceJugadorDestino, int indiceCartaDestino) {
 		try {
-			juego.intercambiarCartasDestino(jugadorDestino,numeroCarta);
+			return juego.intercambiarCartas(indiceJugadorOrigen,indiceCartaOrigen,indiceJugadorDestino,indiceCartaDestino);
 		} catch (RemoteException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+		return false;
 	}
 	/*
 	public void intercambiarCartasOrigen(Jugador jugadorDestino, String numeroCarta) {
@@ -318,9 +308,9 @@ public class Controlador implements IControladorRemoto{
 	}
 
 	
-	public void cartasMostradas() {
+	public void cartasMostradas(int vistaDelJugadorNro) {
 		try {
-			juego.cartasMostradas();
+			juego.cartasMostradas(vistaDelJugadorNro);
 		} catch (RemoteException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -356,6 +346,26 @@ public class Controlador implements IControladorRemoto{
 		}
 		// TODO Auto-generated method stub
 		
+	}
+
+	public boolean vistaCargada(int vistaDelJugadorNro) {
+		try {
+			return juego.vistaCargada(vistaDelJugadorNro);
+		} catch (RemoteException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return false;
+	}
+
+	public ArrayList<Jugador> getJugadoresSinAsignarVista() {
+		try {
+			return juego.getJugadoresSinAsignarVista();
+		} catch (RemoteException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return null;
 	}
 
 }

@@ -34,7 +34,7 @@ public class S {
 		);
 		
 		Juego modelo = new Juego(); // modelo
-		Servidor servidor = new Servidor("192.168.0.220", Integer.parseInt(port));
+		Servidor servidor = new Servidor("127.0.0.1", Integer.parseInt(port));
 		try {
 			servidor.iniciar(modelo);
 		} catch (RemoteException e) {

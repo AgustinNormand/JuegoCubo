@@ -6,6 +6,11 @@ import javax.swing.ImageIcon;
 
 public class Carta implements Cloneable,Serializable{
 	
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1071615811335128882L;
+	
 	private tipoPalo palo;
 	private int numero;
 	private boolean visible;
@@ -17,7 +22,6 @@ public class Carta implements Cloneable,Serializable{
 		this.numero = numero;
 		this.palo = palo;
 		this.visible = visible;
-		this.valor = valor;
 		icon = new ImageIcon(getClass().getResource("/Cartas/"+this.numero+"DE"+this.palo.toString()+".png"));
 		dorso = new ImageIcon(getClass().getResource("/Cartas/DORSO.png"));
 		
@@ -60,14 +64,22 @@ public class Carta implements Cloneable,Serializable{
 		return cartaDuplicada;
 	}
 
-
+	public int getNumero() {
+		return numero;
+	}
 
 	public ImageIcon getIcon() {
-		if (visible)
+		if (visible)//visible
 			return icon;
 		else
 			return dorso;
 		
+	}
+
+
+
+	public boolean isVisible() {
+		return visible;
 	}
 
 }

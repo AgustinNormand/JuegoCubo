@@ -17,19 +17,13 @@ public interface JuegoPublico extends IObservableRemoto{
 
 	int getJugadorEnTurno()throws RemoteException;
 
-	void jugarTurno() throws RemoteException;
-
 	void verificarFinTurno(Jugador jugador) throws RemoteException;
 
-	void levantarDeDescartadas(int indiceJugador) throws RemoteException;
+	void levantarDeDescartadas() throws RemoteException;
 
-	void levantarDeMazo(int indiceJugador) throws RemoteException;
+	void levantarDeMazo() throws RemoteException;
 
 	int agregarJugador(String nombre) throws RemoteException;
-
-//	void notificarObservadores(Object cambio);
-
-	//void agregarObservador(IObservador observador);
 
 	String getEstado()throws RemoteException;
 
@@ -55,26 +49,30 @@ public interface JuegoPublico extends IObservableRemoto{
 
 	int getGanador()throws RemoteException;
 
-	void arrojarError(String errorMessage) throws RemoteException;
+	void arrojarError(String errorMessage, int indiceJugadorError) throws RemoteException;
 
 	void espejito(int numeroJugador, int numeroCarta) throws RemoteException;
 
 	int cantidadJugadores()throws RemoteException;
 
-	boolean puedoFinalizarTurno(int numeroJugador) throws RemoteException;
-
-	void jugadorDeseaVerCarta(int numeroJugador) throws RemoteException;
+	boolean jugadorDeseaVerCarta(int numeroJugador) throws RemoteException;
 
 	void mostrarCarta(int numeroJugador, int indiceCartaAMostrar) throws RemoteException;
 
-	void intercambiarCartasDestino(Jugador jugadorDestino, String numeroCarta)throws RemoteException;
+	boolean intercambiarCartas(int indiceJugadorOrigen, int indiceCartaOrigen, int indiceJugadorDestino, int indiceCartaDestino)throws RemoteException;
 	
-	public void cartasMostradas() throws RemoteException;
+	public void cartasMostradas(int vistaDelJugadorNro) throws RemoteException;
 	
 	int getJugadorAMostrarCarta() throws RemoteException;
 
 	void guardarPartida()throws RemoteException;
 	
 	void cargarPartida() throws RemoteException;
+	
+	int getIndiceJugadorError() throws RemoteException;
+
+	boolean vistaCargada(int vistaDelJugadorNro) throws RemoteException;
+
+	ArrayList<Jugador> getJugadoresSinAsignarVista() throws RemoteException;
 
 }

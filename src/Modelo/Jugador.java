@@ -2,21 +2,30 @@ package Modelo;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Collections;
 
 public class Jugador implements Cloneable,Serializable{
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -8937077879772348762L;
+	
 	private String nombre;
 	private int puntaje;
 	private ArrayList<Carta> cartas;
 	private estadoJugador estado;
+	private int numeroJugador = -1;
 	private boolean enTurno = false;
 	
 	private boolean levanto = false;
 	private boolean tiro = false;
 	
-	public Jugador(String nombre) {
-		this(nombre,0,new ArrayList<>(),estadoJugador.JUGANDO,false,false,false);
+	private ArrayList<Integer> huecos;
+	
+	public Jugador(String nombre,int numeroJugador) {
+		this(nombre,0,new ArrayList<>(),estadoJugador.JUGANDO,false,false,false,new ArrayList<>(),numeroJugador);
 	}
-	public Jugador(String nombre, int puntaje, ArrayList<Carta> cartas, estadoJugador estado,boolean enTurno,boolean levanto,boolean tiro) {
+	public Jugador(String nombre, int puntaje, ArrayList<Carta> cartas, estadoJugador estado,boolean enTurno,boolean levanto,boolean tiro,ArrayList<Integer> huecos,int numeroJugador) {
 		this.nombre = nombre;
 		this.puntaje = puntaje;
 		this.cartas = cartas;
@@ -24,12 +33,21 @@ public class Jugador implements Cloneable,Serializable{
 		this.enTurno = enTurno;
 		this.levanto = levanto;
 		this.tiro = tiro;
+		this.numeroJugador = numeroJugador;
+		this.huecos = huecos;
 	}
 
 	public void recivirCarta(Carta carta) {
 		cartas.add(carta);
+	}
+	public void levantarCarta(Carta carta) {
+		if (!huecos.isEmpty()) {
+			cartas.add(huecos.get(huecos.indexOf(Collections.min(huecos))),carta);
+			huecos.remove(0);
 		}
-	
+		else
+			cartas.add(carta);
+	}
 	public boolean isJugando() {
 		return estado == estadoJugador.JUGANDO;
 	}
@@ -65,9 +83,14 @@ public class Jugador implements Cloneable,Serializable{
 
 	public Carta quitarCarta(int cartaADescartar) {
 		Carta cartaRemovida = null;
-		cartaADescartar = cartaADescartar -1;
 		if (cartaADescartar >= 0 && cartaADescartar < cartas.size()) {
 			cartaRemovida = cartas.get(cartaADescartar);
+			if (cartaADescartar != cartas.size()-1) { 
+				int cartaADescartarAuxiliar = cartaADescartar;
+				while (huecos.contains(cartaADescartarAuxiliar)) //Si ese hueco ya existe
+					cartaADescartarAuxiliar++; //Busco un hueco que no exista
+				huecos.add(cartaADescartarAuxiliar);
+			}
 			cartas.remove(cartaADescartar);
 		}
 		return cartaRemovida;
@@ -75,6 +98,10 @@ public class Jugador implements Cloneable,Serializable{
 	
 	public String getEstado() {
 		return estado.toString();
+	}
+	
+	public ArrayList<Integer> getHuecos() {
+		return huecos;
 	}
 	
 	public int getPuntaje() {
@@ -88,6 +115,10 @@ public class Jugador implements Cloneable,Serializable{
 
 	public void resetearCartas() {
 		cartas.clear();
+		this.enTurno = false;
+		this.tiro = false;
+		this.levanto = false;
+		this.huecos.clear();
 	} 
 	
 	public Jugador duplicar() {
@@ -95,7 +126,7 @@ public class Jugador implements Cloneable,Serializable{
 		for (Carta carta:cartas) {
 			cartasDuplicadas.add(carta.duplicar());
 		}
-		Jugador jugadorDuplicado = new Jugador(this.nombre,this.puntaje,cartasDuplicadas,this.estado,this.enTurno,this.levanto,this.tiro);
+		Jugador jugadorDuplicado = new Jugador(this.nombre,this.puntaje,cartasDuplicadas,this.estado,this.enTurno,this.levanto,this.tiro,this.huecos,this.numeroJugador);
 		return jugadorDuplicado;
 	}
 	public boolean yaLevanto() {
@@ -115,6 +146,16 @@ public class Jugador implements Cloneable,Serializable{
 	}
 	public boolean isEnTurno() {
 		return enTurno;
+	}
+	public int getNumeroJugador() {
+		return numeroJugador;
+	}
+	public void reemplazarCarta(Carta cartaOrigen, Carta cartaDestino) {
+		if ((cartaOrigen != null) && (cartaDestino != null)) {
+			int indexOfCartaOrigen = cartas.indexOf(cartaOrigen);
+			cartas.remove(indexOfCartaOrigen);
+			cartas.add(indexOfCartaOrigen,cartaDestino);
+		}
 	}
 	}
 

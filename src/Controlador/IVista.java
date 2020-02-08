@@ -10,18 +10,14 @@ public interface IVista {
 	void nuevoEstadoJuego(String estado);
 	void nuevoTurnoJugador(int numeroJugador);
 	void nuevaCartaDescartada(Carta cartaDescartada);
-	void verificarTodosListos();
-	void mostrar2CartasJugadores();
 	void terminarJuego(int ganador);
-	void cartaLevantada();
 	void unJugadorDijoCubo(String nombre);
-	void error(String string);
-	void manoTerminada(/*ArrayList<Jugador> puntajes*/);
+	void error(String string,int indiceJugadorError);
 	void actualizarListaJugadores(ArrayList<Jugador> jugadores);
-	void finTurnoHabilitado(int numeroJugador);
-	void verificarVioCarta();
 	void puedeVerCarta();
 	void puedeIntercambiarCarta();
 	void iniciar();
 	void nuevasCartasJugadorAMostrarCartas(int jugadorAMostrarCartas);
+	void seleccionarJugador(ArrayList<Jugador> jugadores);
+	void comenzoJuego();
 }
