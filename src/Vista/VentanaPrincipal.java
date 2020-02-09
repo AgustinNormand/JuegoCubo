@@ -1,3 +1,4 @@
+package Vista;
 
 
 import java.awt.BorderLayout;

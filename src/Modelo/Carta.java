@@ -35,10 +35,10 @@ public class Carta implements Cloneable,Serializable{
 	
 	@Override
 	public String toString() {
-	//if (visible)
+	if (visible)
 		return numero+" de "+palo;
-	//else
-		// return "X";
+	else
+		 return "X";
 	}
 
 	public void setVisible(boolean visible) {

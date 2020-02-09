@@ -13,7 +13,6 @@ public class S {
 	public static void main(String[] args) {
 		//
 		ArrayList<String> ips = Util.getIpDisponibles();
-		/*
 		String ip = (String) JOptionPane.showInputDialog(
 				null, 
 				"Seleccione la IP en la que escuchar peticiones el servidor", "IP del servidor", 
@@ -22,7 +21,6 @@ public class S {
 				ips.toArray(),
 				null
 		);
-		*/
 		
 		String port = (String) JOptionPane.showInputDialog(
 				null, 
@@ -34,7 +32,7 @@ public class S {
 		);
 		
 		Juego modelo = new Juego(); // modelo
-		Servidor servidor = new Servidor("127.0.0.1", Integer.parseInt(port));
+		Servidor servidor = new Servidor(ip, Integer.parseInt(port));
 		try {
 			servidor.iniciar(modelo);
 		} catch (RemoteException e) {

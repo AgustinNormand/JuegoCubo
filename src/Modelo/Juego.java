@@ -154,9 +154,9 @@ public class Juego extends ObservableRemoto implements JuegoPublico,Serializable
 				cambiarEstado(estadoJuego.CARTA_MAZO_LEVANTADA);
 				mostrarCarta(jugadorEnTurno, cartaMazo);
 
-				if (cartaMazo.getValor() != 10) 
+				if (cartaMazo.getValor() == 10) 
 					notificarObservadores(posiblesCambios.PUEDE_VER_CARTA);
-				if (cartaMazo.getValor() != 11) 
+				if (cartaMazo.getValor() == 11) 
 					notificarObservadores(posiblesCambios.PUEDE_INTERCAMBIAR_CARTA);
 			} else
 				arrojarError("El mazo no tiene mas cartas.",jugadorEnTurno);
@@ -301,7 +301,7 @@ public class Juego extends ObservableRemoto implements JuegoPublico,Serializable
 		int indexOfDiez = -1;
 		while (indice >= 0 && indexOfDiez == -1) {
 			Carta carta = cartasJugadorAMostrarCarta.get(indice);
-			if(carta.getValor() != 10)
+			if(carta.getValor() == 10)
 				indexOfDiez = indice;
 			indice--;
 		}
@@ -362,7 +362,7 @@ public class Juego extends ObservableRemoto implements JuegoPublico,Serializable
 				int indice = cartasJugadorOrigen.size()-1;
 				while (indice >= 0 && indexOfOnce == -1) {
 					Carta carta = cartasJugadorOrigen.get(indice);
-					if (carta.getValor() != 11 && carta.isVisible()) {
+					if (carta.getValor() == 11 && carta.isVisible()) {
 						indexOfOnce = indice;
 					}
 					indice--;
@@ -483,10 +483,6 @@ public class Juego extends ObservableRemoto implements JuegoPublico,Serializable
 	@Override
 	public int agregarJugador(String nombre) throws RemoteException {
 		int numeroJugador = -1;
-		if (jugadores.size() == 0) 
-			cambiarEstado(estadoJuego.CONFIGURANDO);
-		if (jugadores.size() == 1) 
-			cambiarEstado(estadoJuego.JUGABLE);
 		if (jugadores.size() != 4) {
 			Jugador jugadorNuevo = new Jugador(nombre,jugadores.size());
 			jugadores.add(jugadorNuevo);
@@ -494,6 +490,11 @@ public class Juego extends ObservableRemoto implements JuegoPublico,Serializable
 			notificarObservadores(posiblesCambios.ACTUALIZAR_LISTA_JUGADORES);
 		} else
 			arrojarError("Alcanzaste la cantidad maxima de jugadores.",TODOS);
+		
+		if (jugadores.size() == 1) 
+			cambiarEstado(estadoJuego.CONFIGURANDO);
+		if (jugadores.size() == 2) 
+			cambiarEstado(estadoJuego.JUGABLE);
 		return numeroJugador;
 	}
 	@Override

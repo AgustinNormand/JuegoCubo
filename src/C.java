@@ -5,6 +5,7 @@ import javax.swing.JOptionPane;
 
 import Controlador.Controlador;
 import Controlador.IVista;
+import Vista.VentanaPrincipal;
 import ar.edu.unlu.rmimvc.RMIMVCException;
 import ar.edu.unlu.rmimvc.Util;
 import ar.edu.unlu.rmimvc.cliente.Cliente;
@@ -31,7 +32,7 @@ public class C {
 				null,
 				9999
 		);
-		/*
+		
 		String ipServidor = (String) JOptionPane.showInputDialog(
 				null, 
 				"Seleccione la IP en la corre el servidor", "IP del servidor", 
@@ -40,7 +41,7 @@ public class C {
 				null,
 				"192.168.0.103"
 		);
-		*/
+		
 		String portServidor = (String) JOptionPane.showInputDialog(
 				null, 
 				"Seleccione el puerto en el que corre el servidor", "Puerto del servidor", 
@@ -52,7 +53,7 @@ public class C {
 		
 		Controlador controlador = new Controlador();
 		IVista vista = new VentanaPrincipal(controlador);
-		Cliente cliente = new Cliente("127.0.0.1",  Integer.parseInt(port), "127.0.0.1", Integer.parseInt(portServidor));
+		Cliente cliente = new Cliente(ip,  Integer.parseInt(port), ipServidor, Integer.parseInt(portServidor));
 		vista.iniciar();
 		try {
 			cliente.iniciar(controlador); // enlaza el controlador con el modelo remoto 
