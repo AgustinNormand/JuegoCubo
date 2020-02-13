@@ -28,9 +28,9 @@ public class GestorTiempos extends Thread implements Serializable{
 			this.numeroJugador = numeroJugador;
 			this.numeroCarta = numeroCarta;
 			dormir(5000);
-		} else 
+		} else {
+			System.out.println("Entro a comparar las diferencias");
 			if (diferencia < this.diferencia) {
-				System.out.println("Entro a comparar las diferencias");
 				diferencia = 0;			
 				juego.espejito(numeroJugador, numeroCarta);
 			}	
@@ -38,6 +38,7 @@ public class GestorTiempos extends Thread implements Serializable{
 				juego.espejito(this.numeroJugador,this.numeroCarta);
 				diferencia = 0;
 			}
+		}
 		juego.espejito(numeroJugador, numeroCarta);
 	}
 	private void dormir(int ms) {
