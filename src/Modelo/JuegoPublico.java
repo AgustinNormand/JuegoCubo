@@ -6,6 +6,8 @@ import java.util.ArrayList;
 import ar.edu.unlu.rmimvc.observer.IObservableRemoto;
 
 public interface JuegoPublico extends IObservableRemoto{
+	
+	GestorTiempos getGestorTiempos() throws RemoteException;
 
 	void configurarJuego() throws RemoteException;
 

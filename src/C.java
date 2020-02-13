@@ -39,7 +39,7 @@ public class C {
 				JOptionPane.QUESTION_MESSAGE, 
 				null,
 				null,
-				"192.168.0.103"
+				"192.168.0.79"
 		);
 		
 		String portServidor = (String) JOptionPane.showInputDialog(
@@ -56,7 +56,8 @@ public class C {
 		Cliente cliente = new Cliente(ip,  Integer.parseInt(port), ipServidor, Integer.parseInt(portServidor));
 		vista.iniciar();
 		try {
-			cliente.iniciar(controlador); // enlaza el controlador con el modelo remoto 
+			cliente.iniciar(controlador); // enlaza el controlador con el modelo remoto
+			controlador.iniciar();
 		} catch (RemoteException e) {
 			e.printStackTrace();
 		} catch (RMIMVCException e) {

@@ -37,6 +37,8 @@ public class DosJugadores {
 		try {
 			cliente.iniciar(controlador); // enlaza el controlador con el modelo remoto
 			cliente2.iniciar(controlador2);
+			controlador.iniciar();
+			controlador2.iniciar();
 		} catch (RemoteException e) {
 			e.printStackTrace();
 		} catch (RMIMVCException e) {

@@ -29,6 +29,8 @@ import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.sql.Timestamp;
+
 import javax.swing.WindowConstants;
 
 public class VentanaPrincipal extends JFrame implements IVista {
@@ -73,6 +75,8 @@ public class VentanaPrincipal extends JFrame implements IVista {
 	private int jugadorDestino = -1;
 	private int cartaOrigen = -1;
 	private int cartaDestino = -1;
+	
+	private Timestamp ultimaInteraccion = new Timestamp(System.currentTimeMillis());
 
 
 	/**
@@ -413,6 +417,7 @@ public class VentanaPrincipal extends JFrame implements IVista {
 			else
 				lblCarta.setIcon(new ImageIcon(getClass().getResource("/Cartas/SMALL_DORSO.png"))); //Establece un dorso mas pequeño a las cartas ajenas
 
+			panelCartas.setMinimumSize(new Dimension(lblCarta.getIcon().getIconHeight()*2,lblCarta.getIcon().getIconWidth()*2));
 			//if (jugadorEnTurno == vistaDelJugadorNro) { //Restringo las acciones con las cartas
 				lblCarta.addMouseListener(new MouseAdapter() {
 					@Override
@@ -423,7 +428,8 @@ public class VentanaPrincipal extends JFrame implements IVista {
 
 						if (espejitoActivado && !intercambiarCartaActivado && !verCartaActivado) {
 							if (cartasPropias) {
-								controlador.espejito(vistaDelJugadorNro, Integer.valueOf(lblCarta.getName()));
+								long diferencia = System.currentTimeMillis() - ultimaInteraccion.getTime();
+								controlador.espejito(vistaDelJugadorNro, Integer.valueOf(lblCarta.getName()),diferencia);
 								espejitoActivado = false;
 								btnEspejito.setText("Espejito");
 							}
@@ -507,6 +513,7 @@ public class VentanaPrincipal extends JFrame implements IVista {
 			lblCartaDescartada.setIcon(carta.getIcon());
 		else
 			lblCartaDescartada.setIcon(new ImageIcon(getClass().getResource("/Cartas/VACIO.png")));
+		ultimaInteraccion  = new Timestamp(System.currentTimeMillis());
 	}
 
 	@Override

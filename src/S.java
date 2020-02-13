@@ -11,7 +11,7 @@ import ar.edu.unlu.rmimvc.servidor.Servidor;
 public class S {
 	
 	public static void main(String[] args) {
-		//
+		/*
 		ArrayList<String> ips = Util.getIpDisponibles();
 		String ip = (String) JOptionPane.showInputDialog(
 				null, 
@@ -30,9 +30,10 @@ public class S {
 				null,
 				8888
 		);
-		
+		*/
 		Juego modelo = new Juego(); // modelo
-		Servidor servidor = new Servidor(ip, Integer.parseInt(port));
+		//Servidor servidor = new Servidor(ip, Integer.parseInt(port));
+		Servidor servidor = new Servidor("192.168.0.79", Integer.parseInt("8888"));
 		try {
 			servidor.iniciar(modelo);
 		} catch (RemoteException e) {

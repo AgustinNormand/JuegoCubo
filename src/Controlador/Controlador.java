@@ -3,6 +3,7 @@ package Controlador;
 import java.rmi.RemoteException;
 import java.util.ArrayList;
 
+import Modelo.GestorTiempos;
 import Modelo.JuegoPublico;
 import Modelo.Jugador;
 import ModeloControlador.posiblesCambios;
@@ -13,6 +14,7 @@ public class Controlador implements IControladorRemoto{
 	
 	private JuegoPublico juego;
 	private IVista vista;
+	private GestorTiempos gestorTiempos;
 
 	public <T extends IObservableRemoto> Controlador(T modelo) {
 		try {
@@ -25,6 +27,15 @@ public class Controlador implements IControladorRemoto{
 	
 	public Controlador() {
 		
+	}
+	
+	public void iniciar() {
+		try {
+			gestorTiempos = juego.getGestorTiempos();
+		} catch (RemoteException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 	
 	public void setVista(IVista vista) {
@@ -240,9 +251,10 @@ public class Controlador implements IControladorRemoto{
 		return false;
 	}
 
-	public void espejito(int numeroJugador, int cartaAHacerEspejito){
+	public void espejito(int numeroJugador, int cartaAHacerEspejito, long diferencia){
 		try {
-			juego.espejito(numeroJugador, cartaAHacerEspejito);
+			//juego.espejito(numeroJugador, cartaAHacerEspejito);
+			gestorTiempos.espejito(numeroJugador, cartaAHacerEspejito,diferencia);
 		} catch (RemoteException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

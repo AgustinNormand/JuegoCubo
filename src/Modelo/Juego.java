@@ -33,8 +33,16 @@ public class Juego extends ObservableRemoto implements JuegoPublico,Serializable
 	private int indiceJugadorAMostrarCarta = -1; //Indice de jugador a quien se le debe mostrar cartas
 	private String errorMessage = ""; //Mensaje de error para enviar a los jugadores
 	private int indiceJugadorError = -1; //Indice de jugador para enviarle un mensaje de error a un jugador especifico
+	
+	private GestorTiempos gestorTiempos;
 
 	public Juego() {
+		gestorTiempos = new GestorTiempos(this);
+		new Thread(gestorTiempos).start();
+	}
+	
+	public GestorTiempos getGestorTiempos() {
+		return gestorTiempos;
 	}
 
 	@Override
@@ -259,6 +267,7 @@ public class Juego extends ObservableRemoto implements JuegoPublico,Serializable
 
 	@Override
 	public void espejito(int numeroJugador, int numeroCarta) throws RemoteException {
+		System.out.println("Entro en el juego");
 		if (mazo.hayCartaDescartada()) {
 			if (!estado.equals(estadoJuego.ESPEJITO_REALIZADO)) {
 				cambiarEstado(estadoJuego.JUGANDO);
