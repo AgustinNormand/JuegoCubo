@@ -411,11 +411,15 @@ public class Juego extends ObservableRemoto implements JuegoPublico,Serializable
 	public boolean vistaCargada(int nroJugadorAsignado) throws RemoteException {
 		boolean asignado = false;
 		boolean encontrado = false;
-		for (Jugador jugador:jugadoresSinAsignarVista) 
+		int index = 0;
+		while (!encontrado && index < jugadoresSinAsignarVista.size()){
+			Jugador jugador = jugadoresSinAsignarVista.get(index);
 			if (jugador.getNumeroJugador() == nroJugadorAsignado) {
-				nroJugadorAsignado = jugadoresSinAsignarVista.indexOf(jugador);
+				nroJugadorAsignado = index;
 				encontrado = true;
 			}
+			index++;
+		}
 		if (encontrado) {
 			asignado = true;
 			jugadoresSinAsignarVista.remove(nroJugadorAsignado);
@@ -432,8 +436,7 @@ public class Juego extends ObservableRemoto implements JuegoPublico,Serializable
 						notificarObservadores(posiblesCambios.NUEVAS_CARTAS_JUGADORES);
 				}
 			}
-		} else
-			asignado =  false;
+		}
 		return asignado;
 	}
 

@@ -42,15 +42,17 @@ public class FrameSeleccionJugador extends JFrame {
 		panel.setLayout(new MigLayout("", "[]", "[][][]"));
 		
 		JLabel lblInformativo = new JLabel("Indique el indice del jugador que le pertenece");
+		setMinimumSize(new Dimension(350,140));
 		panel.add(lblInformativo, "cell 0 0,alignx center,aligny center");
 		lblInformativo.setVisible(true);
+
+		if (jugadores.isEmpty())
+			dispose();
 		
 		int fila = 1;
 		for (Jugador jugador:jugadores) {
 		panel.add(new JLabel(jugador.getNumeroJugador() +" "+jugador.getNombre()), "cell 0 "+fila++ +",alignx center,aligny center");
 		}
-		
-		setMinimumSize(new Dimension(lblInformativo.getSize().width+40,140));
 		
 		JTextField jtxField = new JTextField();
 		panel.add(jtxField, "cell 0 "+fila++ +",alignx center,aligny center");

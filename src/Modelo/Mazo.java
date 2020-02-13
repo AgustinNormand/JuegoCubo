@@ -93,7 +93,7 @@ public class Mazo implements Serializable{
 	public Carta espejito(Carta cartaEspejito) {
 		if (cartaDisponibleDescartadas != -1) {
 			Carta cartaDescartada = cartasDescartadas.get(cartaDisponibleDescartadas);
-			if (cartaDescartada.getNumero() != cartaEspejito.getNumero()) {
+			if (cartaDescartada.getNumero() == cartaEspejito.getNumero()) {
 				descartarCarta(cartaEspejito.duplicar());
 				return null;
 			} else {

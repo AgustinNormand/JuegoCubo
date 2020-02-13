@@ -322,6 +322,7 @@ public class VentanaPrincipal extends JFrame implements IVista {
 
 	@Override
 	public void nuevasCartasJugadorAMostrarCartas(int jugadorAMostrarCartas) {
+		
 		/* Muestra las cartas a todos los jugadores, casi todos las verán ocultas, excepto 1 jugador (el jugadorAMostrarCartas) y a este 
 		 * tambien se le hará visible el boton "Cartas Vistas" */
 		if (jugadorAMostrarCartas == vistaDelJugadorNro) 
@@ -353,7 +354,7 @@ public class VentanaPrincipal extends JFrame implements IVista {
 			lblCartaMazo.setVisible(true);
 		}
 		if (estadoJuego.equals("MANO_TERMINADA")) {
-
+			btnEspejito.setVisible(false);
 		}
 	}
 
@@ -363,8 +364,6 @@ public class VentanaPrincipal extends JFrame implements IVista {
 		this.jugadores = jugadores;
 		int columna = 1;
 		panelCentral.removeAll();
-		panelCentral.revalidate();
-		panelCentral.repaint();
 		panelCentral.add(panelMazo,"cell 0 0"); //Agrega el mazo y las cartas descartadas en la primer posicion
 		for (Jugador jugador:jugadores) {
 			if (jugadores.indexOf(jugador) != vistaDelJugadorNro) { // Las imprime en el panel central
@@ -391,13 +390,13 @@ public class VentanaPrincipal extends JFrame implements IVista {
 				imprimirCartas(jugador,panelCartasPropias,true); // Igual a la llamada anterior, indicando que se trata de las cartas propias
 			}
 		}
+		panelCentral.revalidate();
+		panelCentral.repaint();
 	}
 
 	public void imprimirCartas(Jugador jugador,JPanel panelCartas, boolean cartasPropias) {
 		/*Crea y ubica en los paneles los label que contienen las cartas*/
 		panelCartas.removeAll();
-		panelCartas.revalidate();
-		panelCartas.repaint();
 		ArrayList<Carta> cartasJugador = jugador.getCartas();
 		ArrayList<Integer> huecos = jugador.getHuecos(); //Se trata de espacios en las cartas del jugador, para que sea mas intuitivo el comportamiento de las cartas
 		int indiceCarta = 0;
@@ -484,6 +483,8 @@ public class VentanaPrincipal extends JFrame implements IVista {
 			fila++;
 			indiceCarta++;
 		}
+		panelCartas.revalidate();
+		panelCartas.repaint();
 	}
 
 	@Override
@@ -531,12 +532,10 @@ public class VentanaPrincipal extends JFrame implements IVista {
 
 	private void inicializarPaneles() {
 		panelCentral.removeAll();
-		panelCentral.revalidate();
-		panelCentral.repaint();
+		
 
 		panelIzquierdo.removeAll();
-		panelIzquierdo.revalidate();
-		panelIzquierdo.repaint();
+		
 
 		panelMazo = new JPanel();		
 		panelMazo.setLayout(new MigLayout());
@@ -558,6 +557,12 @@ public class VentanaPrincipal extends JFrame implements IVista {
 		scrollCartasPropias.setMinimumSize(new Dimension(200,220));
 		panelIzquierdo.add(scrollCartasPropias, "cell 0 1,grow");
 		panelIzquierdo.add(new JLabel(""),"cell 0 0,center");
+		
+		panelCentral.revalidate();
+		panelCentral.repaint();
+		
+		panelIzquierdo.revalidate();
+		panelIzquierdo.repaint();
 	}
 
 	@Override
