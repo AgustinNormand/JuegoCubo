@@ -22,6 +22,7 @@ public class GestorTiempos extends Thread implements Serializable{
 	
 	
 	public void espejito(int numeroJugador, int numeroCarta, long diferencia) throws RemoteException{
+		System.out.println("Entro en el gestor");
 		if (cantidadPeticiones == 0) {
 			this.diferencia = diferencia;
 			cantidadPeticiones = 1;
@@ -39,7 +40,6 @@ public class GestorTiempos extends Thread implements Serializable{
 				diferencia = 0;
 			}
 		}
-		juego.espejito(numeroJugador, numeroCarta);
 	}
 	private void dormir(int ms) {
 		try {
