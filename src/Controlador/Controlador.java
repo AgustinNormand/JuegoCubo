@@ -253,8 +253,7 @@ public class Controlador implements IControladorRemoto{
 
 	public void espejito(int numeroJugador, int cartaAHacerEspejito, long diferencia){
 		try {
-			//juego.espejito(numeroJugador, cartaAHacerEspejito);
-			gestorTiempos.espejito(numeroJugador, cartaAHacerEspejito,diferencia);
+			juego.gestionarEspejito(numeroJugador, cartaAHacerEspejito,diferencia);
 		} catch (RemoteException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

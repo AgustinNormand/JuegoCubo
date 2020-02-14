@@ -34,11 +34,19 @@ public class Juego extends ObservableRemoto implements JuegoPublico,Serializable
 	private String errorMessage = ""; //Mensaje de error para enviar a los jugadores
 	private int indiceJugadorError = -1; //Indice de jugador para enviarle un mensaje de error a un jugador especifico
 	
+	private ArrayList<String> peticiones = new ArrayList<String>();
+	
+	
 	private GestorTiempos gestorTiempos;
 
 	public Juego() {
-		gestorTiempos = new GestorTiempos(this);
-		new Thread(gestorTiempos).start();
+		
+	}
+	
+	public void gestionarEspejito(int numeroJugador, int cartaAHacerEspejito,long diferencia) {
+		ThreadGroup threadGroup = new ThreadGroup("ThreadsEspejito");
+		gestorTiempos = new GestorTiempos(this,peticiones,numeroJugador,cartaAHacerEspejito,diferencia);
+		new Thread(threadGroup,gestorTiempos,"EspejitoThread").start();
 	}
 	
 	public GestorTiempos getGestorTiempos() {
@@ -92,6 +100,15 @@ public class Juego extends ObservableRemoto implements JuegoPublico,Serializable
 		jugador.setEnTurno(true);
 		notificarObservadores(posiblesCambios.ACTUALIZAR_LISTA_JUGADORES); //Actualiza la tabla y el arraylist.
 		notificarObservadores(posiblesCambios.NUEVAS_CARTAS_JUGADOR_A_MOSTRAR_CARTA);
+		/*
+		synchronized (this) {
+			try {
+				wait(5000);
+			} catch (InterruptedException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}*/
 	}
 
 	@Override
@@ -267,7 +284,6 @@ public class Juego extends ObservableRemoto implements JuegoPublico,Serializable
 
 	@Override
 	public void espejito(int numeroJugador, int numeroCarta) throws RemoteException {
-		System.out.println("Entro en el juego");
 		if (mazo.hayCartaDescartada()) {
 			if (!estado.equals(estadoJuego.ESPEJITO_REALIZADO)) {
 				cambiarEstado(estadoJuego.JUGANDO);

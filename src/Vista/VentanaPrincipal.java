@@ -376,10 +376,11 @@ public class VentanaPrincipal extends JFrame implements IVista {
 				panelCartasJugador.setLayout(new MigLayout("","[][]","[]"));
 				cartasJugador = new JPanel();
 				cartasJugador.setLayout(new MigLayout("","[][]","[][]"));
+				ImageIcon ic = new ImageIcon(getClass().getResource("/Cartas/SMALL_DORSO.png"));
 				JScrollPane scrollCartasJugador = new JScrollPane(cartasJugador);
 				scrollCartasJugador.setBorder(null);
-				scrollCartasJugador.setMinimumSize(new Dimension(200,220));
-				scrollCartasJugador.setMaximumSize(new Dimension(200,500));
+				scrollCartasJugador.setMinimumSize(new Dimension((int) Math.round(ic.getIconWidth()*2.6),(int) Math.round(ic.getIconHeight()*2)));
+				scrollCartasJugador.setMaximumSize(new Dimension((int) Math.round(ic.getIconWidth()*2.6),(int) Math.round(ic.getIconHeight()*5)));
 
 				panelCartasJugador.add(new JLabel("   Cartas de "+jugador.getNombre()),"cell 0 0");
 				panelCartasJugador.add(scrollCartasJugador,"cell 0 1,grow");
@@ -417,7 +418,7 @@ public class VentanaPrincipal extends JFrame implements IVista {
 			else
 				lblCarta.setIcon(new ImageIcon(getClass().getResource("/Cartas/SMALL_DORSO.png"))); //Establece un dorso mas pequeño a las cartas ajenas
 
-			panelCartas.setMinimumSize(new Dimension(lblCarta.getIcon().getIconHeight()*2,lblCarta.getIcon().getIconWidth()*2));
+			//panelCartas.setMinimumSize(new Dimension(lblCarta.getIcon().getIconHeight()*2,lblCarta.getIcon().getIconWidth()*2));
 			//if (jugadorEnTurno == vistaDelJugadorNro) { //Restringo las acciones con las cartas
 				lblCarta.addMouseListener(new MouseAdapter() {
 					@Override
@@ -561,7 +562,8 @@ public class VentanaPrincipal extends JFrame implements IVista {
 		panelCartasPropias.setLayout(new MigLayout("","[][]","[][]"));
 		JScrollPane scrollCartasPropias = new JScrollPane(panelCartasPropias);
 		scrollCartasPropias.setBorder(null);
-		scrollCartasPropias.setMinimumSize(new Dimension(200,220));
+		scrollCartasPropias.setMinimumSize(new Dimension((int) Math.round(dorsoCarta.getIconWidth()*2.5),dorsoCarta.getIconHeight()*4));
+		scrollCartasPropias.setMaximumSize(new Dimension((int) Math.round(dorsoCarta.getIconWidth()*2.5),(int) Math.round(dorsoCarta.getIconHeight()*5.4)));
 		panelIzquierdo.add(scrollCartasPropias, "cell 0 1,grow");
 		panelIzquierdo.add(new JLabel(""),"cell 0 0,center");
 		

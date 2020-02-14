@@ -7,8 +7,10 @@ import ar.edu.unlu.rmimvc.observer.IObservableRemoto;
 
 public interface JuegoPublico extends IObservableRemoto{
 	
+	void gestionarEspejito(int numeroJugador, int cartaAHacerEspejito,long diferencia) throws RemoteException;
+	
 	GestorTiempos getGestorTiempos() throws RemoteException;
-
+	
 	void configurarJuego() throws RemoteException;
 
 	void repartirCartas() throws RemoteException;
